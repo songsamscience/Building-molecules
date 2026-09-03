@@ -26,7 +26,7 @@
   --sh2:0 10px 26px rgba(0,0,0,.34);
   --sh3:0 22px 56px rgba(0,0,0,.50);
   /* 레이아웃 높이 */
-  --h-header:60px; --h-tabs:44px;
+  --h-header:60px; --h-tabs:44px; --h-benchtop:52px;
   /* 모션 */
   --t-fast:.16s; --t-mid:.25s; --t-in:.4s;
   --spring:cubic-bezier(.34,1.56,.64,1);
@@ -123,6 +123,16 @@ body.fs #app{height:100vh}
 .ib.sns.yt .badge{background:#FF0000}
 .ib.sns.ig .badge{background:linear-gradient(135deg,#F9CE34,#EE2A7B 52%,#6228D7)}
 .ib.sns span{font-size:12px;font-weight:700;color:var(--ink-2)}
+/* 한글 라벨을 단 알약형 아이콘 버튼 — 모든 탭에서 늘 보인다 */
+.ib.lbl{
+  width:auto;display:flex;align-items:center;gap:7px;padding:0 14px;height:40px;
+  border-radius:var(--r-pill);color:#fff;
+  background:linear-gradient(160deg,var(--brand-blue),#0A4A7E);border:1px solid #2A7FD4;
+  box-shadow:var(--sh1);flex:0 0 auto;
+}
+.ib.lbl:hover{background:linear-gradient(160deg,var(--brand-blue),#0A4A7E);color:#fff;filter:brightness(1.12)}
+.ib.lbl svg{width:17px;height:17px}
+.ib.lbl span{font-size:12.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
 
 /* ---- 탭 ---- */
 .tabs{display:flex;align-items:center;gap:var(--sp2);padding:0 var(--sp4);border-bottom:1px solid var(--line-soft);overflow-x:auto;scrollbar-width:none}
@@ -138,6 +148,7 @@ body.fs #app{height:100vh}
 .tab.done .step{background:var(--ok);border-color:var(--ok);color:#04180F}
 .tab.done .step::after{content:"✓";font-weight:900;font-size:10px}
 .tab.ref[aria-selected="true"]{border-bottom-color:var(--violet)}
+.tab .step.ico{border:0;background:none;width:18px;flex:0 0 18px;font-size:13px;line-height:1}
 
 /* ---- 스테이지 ---- */
 #stage{position:relative;min-height:0;overflow:hidden}
@@ -206,8 +217,16 @@ html[data-theme="light"] .btn.primary{background:linear-gradient(160deg,#2B82D8,
 
 /* ============ 탭1 · 분자 조립대 ============ */
 .lab{grid-template-columns:minmax(0,1fr) 336px;gap:var(--sp3);padding:var(--sp3);min-height:0}
-.benchcol{display:grid;grid-template-rows:auto 1fr;gap:var(--sp2);min-height:0;min-width:0}
-.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.benchcol{display:grid;grid-template-rows:minmax(0,1fr);min-height:0;min-width:0}
+/* 목표 분자 고르기 — 실험 화면 안쪽 상단 띠 (§3.1) */
+.benchtop{
+  position:absolute;left:0;right:0;top:0;z-index:6;height:var(--h-benchtop);
+  display:flex;align-items:center;gap:8px;padding:0 var(--sp3);
+  background:linear-gradient(180deg,rgba(10,14,22,.86),rgba(10,14,22,.46) 66%,transparent);
+}
+html[data-theme="light"] .benchtop{background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.58) 66%,transparent)}
+.benchtop .k{flex:0 0 auto;font-size:10.5px;font-weight:800;color:var(--ink-3);letter-spacing:.02em}
+.chips{display:flex;gap:6px;overflow-x:auto;flex:1 1 auto;min-width:0;padding:8px 0;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{
   flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--ink-2);
@@ -225,25 +244,36 @@ html[data-theme="light"] .btn.primary{background:linear-gradient(160deg,#2B82D8,
 .bench svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 .bench.shake{animation:shake .34s}
 @keyframes shake{0%,100%{transform:translateX(0)}22%{transform:translateX(-7px)}55%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
-.bench-empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;color:var(--ink-3);font-size:13.5px;line-height:1.7;pointer-events:none;padding:var(--sp4);padding-bottom:120px}
-.goal{
-  position:absolute;right:var(--sp3);top:var(--sp3);z-index:4;display:flex;align-items:center;gap:8px;
-  background:rgba(10,14,22,.62);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
-  border:1px solid var(--line);border-radius:var(--r-pill);padding:6px 13px;max-width:54%;
+/* 지금 만드는 분자 — 조립대 배경에 크게 깔리는 화학식 */
+.ghost{
+  position:absolute;left:0;right:0;top:var(--h-benchtop);bottom:128px;z-index:0;
+  display:grid;place-content:center;justify-items:center;gap:3px;
+  text-align:center;pointer-events:none;user-select:none;padding:0 var(--sp4);
 }
-html[data-theme="light"] .goal{background:rgba(255,255,255,.78)}
-.goal .k{font-size:10.5px;font-weight:800;color:var(--ink-3);flex:0 0 auto}
-.goal .v{font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.goal .v sub{font-size:.62em}
+.ghost .k{font-size:11px;font-weight:800;letter-spacing:.26em;color:var(--ink-2);opacity:.42}
+.ghost .f{
+  font-size:clamp(58px,12vw,140px);font-weight:800;line-height:.98;letter-spacing:.005em;
+  color:var(--ink);opacity:.105;white-space:nowrap;
+}
+.ghost .f sub{font-size:.54em}
+.ghost .n{font-size:13px;font-weight:700;color:var(--ink-2);opacity:.46}
+html[data-theme="light"] .ghost .f{opacity:.085}
+.ghost.done .f{color:var(--ok);opacity:.20}
+html[data-theme="light"] .ghost.done .f{opacity:.17}
+.ghost.done .k,.ghost.done .n{color:var(--ok);opacity:.86}
+.bench-empty{
+  position:absolute;left:0;right:0;bottom:124px;text-align:center;color:var(--ink-3);
+  font-size:13px;line-height:1.65;pointer-events:none;padding:0 var(--sp4);
+}
 .hud{
-  position:absolute;left:var(--sp3);top:var(--sp3);display:flex;align-items:center;gap:var(--sp2);
+  position:absolute;left:var(--sp3);top:calc(var(--h-benchtop) + 8px);display:flex;align-items:center;gap:9px;
   background:rgba(10,14,22,.62);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
-  border:1px solid var(--line);border-radius:var(--r2);padding:7px 12px;max-width:calc(100% - 24px);
+  border:1px solid var(--line);border-radius:var(--r2);padding:5px 12px;max-width:calc(100% - 24px);
 }
 html[data-theme="light"] .hud{background:rgba(255,255,255,.76)}
 @supports not (backdrop-filter:blur(2px)){.hud{background:var(--panel)}}
-.hud .lbl{font-size:10.5px;color:var(--ink-3);font-weight:700}
-.hud .val{font-size:19px;font-weight:800;line-height:1.15;white-space:nowrap}
+.hud .lbl{font-size:10.5px;color:var(--ink-3);font-weight:700;white-space:nowrap;flex:0 0 auto}
+.hud .val{font-size:15px;font-weight:800;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .hud .val sub{font-size:.62em}
 
 .side{display:flex;flex-direction:column;gap:var(--sp3);min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:2px}
@@ -259,7 +289,13 @@ html[data-theme="light"] .hud{background:rgba(255,255,255,.76)}
 .atom-btn .lb{display:flex;flex-direction:column;line-height:1.15;text-align:left;min-width:0}
 .atom-btn .lb b{font-size:13.5px;font-weight:800}
 .atom-btn .lb span{font-size:10.5px;color:var(--ink-3)}
-.atom-btn .cnt{margin-left:auto;font-size:12px;font-weight:800;color:var(--brand-blue-lit)}
+.atom-btn .cnt{margin-left:auto;font-size:12px;font-weight:800;color:var(--brand-blue-lit);white-space:nowrap}
+.atom-btn .cnt i{font-style:normal;font-weight:700;color:var(--ink-3)}
+.atom-btn.need{border-color:rgba(84,168,255,.45)}
+.atom-btn.need.ok{border-color:var(--ok-line);background:var(--ok-soft)}
+.atom-btn.need.ok .cnt{color:var(--ok)}
+.atom-btn.over{border-color:var(--warn-line)}
+.atom-btn.over .cnt{color:var(--warn)}
 .terms{display:flex;flex-wrap:wrap;gap:5px}
 .term{
   border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);
@@ -613,10 +649,12 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
   .hdr{padding:0 var(--sp2);gap:var(--sp2)}
   .tabs{padding:0 var(--sp3);gap:var(--sp3)}
   .ib.sns{display:none}
+  .ib.lbl{padding:0 11px;height:38px}
+  .ib.lbl .full{display:none}
   .hdr-tools .sep{display:none}
   .lab,.quiz,.mis,.wri,.ref{padding:var(--sp2)}
   .dock.float{left:var(--sp2);right:var(--sp2);transform:none;max-width:none;bottom:var(--sp2)}
-  .goal{max-width:64%}
+
   .tok{font-size:24px}
   .key{min-width:42px}
 }
@@ -625,7 +663,9 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
   .dock{padding:6px;gap:0}
   .atom-btn{min-height:44px;padding:5px 8px}
   .btn{min-height:44px;padding:8px 13px}
-  .bench-empty{padding-bottom:86px}
+  .bench-empty{bottom:78px}
+  .ghost{bottom:82px}
+  .ghost .f{font-size:clamp(44px,9vw,86px)}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
 
@@ -678,8 +718,9 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
       <button class="ib" id="btnBook" type="button" aria-label="이론 책자 열기" title="이론 책자 (B)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.5 5.2 8.4 4.6 6 4.6c-1 0-2 .1-2.8.3v13c.8-.2 1.8-.3 2.8-.3 2.4 0 4.5.6 6 1.9"/><path d="M12 6.5c1.5-1.3 3.6-1.9 6-1.9 1 0 2 .1 2.8.3v13c-.8-.2-1.8-.3-2.8-.3-2.4 0-4.5.6-6 1.9"/><path d="M12 6.5v13"/></svg>
       </button>
-      <button class="ib" id="btnReport" type="button" aria-label="학습 리포트 열기" title="학습 리포트 (R)">
+      <button class="ib lbl" id="btnReport" type="button" aria-label="학습 리포트 열기" title="학습 리포트 (R)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+        <span><span class="full">학습 </span>리포트</span>
       </button>
       <button class="ib" id="btnHelp" type="button" aria-label="도움말 열기" title="도움말 (H)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.8.8c0 1.7-2.4 2.2-2.4 3.8"/><path d="M12 17h.01"/></svg>
@@ -712,7 +753,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false" type="button"><span class="step"></span>화학식 쓰기</button>
     <button class="tab" role="tab" id="t3" aria-controls="p3" aria-selected="false" type="button"><span class="step"></span>원소·화합물 분류</button>
     <button class="tab" role="tab" id="t4" aria-controls="p4" aria-selected="false" type="button"><span class="step"></span>탐구 질문</button>
-    <button class="tab ref" role="tab" id="t5" aria-controls="p5" aria-selected="false" type="button">분자식 표기 순서</button>
+    <button class="tab ref" role="tab" id="t5" aria-controls="p5" aria-selected="false" type="button"><span class="step ico" aria-hidden="true">📘</span>분자식 표기 순서</button>
   </nav>
 
   <!-- ========== 스테이지 ========== -->
@@ -721,18 +762,21 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <!-- ---------- 탭1 · 분자 조립대 ---------- -->
     <section class="pane lab on" id="p1" role="tabpanel" aria-labelledby="t1">
       <div class="benchcol">
-        <div class="chips" id="chips" role="group" aria-label="만들 분자 고르기"></div>
         <div class="bench" id="bench">
-          <svg id="benchSvg" role="img" aria-label="원자 조립대"></svg>
-          <div class="bench-empty" id="benchEmpty">조립대가 비어 있어요.<br>팔레트에서 원자를 눌러 올려 보세요.</div>
-          <div class="hud">
-            <div aria-live="polite">
-              <div class="lbl">지금 올린 원자</div>
-              <div class="val formula" id="hudFormula">—</div>
-            </div>
+          <div class="ghost" id="benchGhost" aria-hidden="true" hidden>
+            <span class="k" id="ghostK">만드는 중</span>
+            <span class="f formula" id="ghostF"></span>
+            <span class="n" id="ghostN"></span>
           </div>
-          <div class="goal" id="benchGoal" hidden>
-            <span class="k">목표</span><span class="v formula" id="goalV"></span>
+          <svg id="benchSvg" role="img" aria-label="원자 조립대"></svg>
+          <div class="bench-empty" id="benchEmpty">팔레트에서 원자를 눌러 조립대에 올려 보세요.</div>
+          <div class="benchtop">
+            <span class="k">만들 분자</span>
+            <div class="chips" id="chips" role="group" aria-label="만들 분자 고르기"></div>
+          </div>
+          <div class="hud" aria-live="polite">
+            <div class="lbl" id="hudLbl">지금 올린 원자</div>
+            <div class="val formula" id="hudFormula">—</div>
           </div>
           <div class="dock float" id="dock1" role="group" aria-label="조립대 조작">
             <div class="row">
@@ -750,7 +794,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         <button class="sheet-handle" id="sheetHandle" type="button" aria-expanded="false">팔레트 펼치기</button>
         <div>
           <h2 class="h-sec">원자 팔레트</h2>
-          <p class="tip" id="paletteTip">원하는 원자를 눌러 조립대에 올려 보세요.</p>
+          <p class="tip" id="paletteTip">조립대에서 쓰는 원자 전부예요. 눌러서 올려 보세요.</p>
           <div style="height:8px"></div>
           <div class="palette" id="palette"></div>
         </div>
@@ -815,7 +859,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         <div class="rule"><div class="n">2</div><div><h4>개수를 오른쪽 아래에 작게</h4><p>원자가 1개이면 숫자 1은 쓰지 않아요.</p></div></div>
         <div class="rule"><div class="n">3</div><div><h4>정해진 순서대로</h4><p>탄소가 있으면 C부터, 없으면 원소 배열 순서를 따릅니다.</p></div></div>
         <div style="height:12px"></div>
-        <button class="btn sm ghost" id="qGoBook" type="button">「분자식 표기 순서」 열기</button>
+        <button class="btn sm ghost" id="qGoBook" type="button">📘 「분자식 표기 순서」 열기</button>
         <div style="height:16px"></div>
         <h2 class="h-sec">원자 색 안내</h2>
         <div class="compo" id="legend"></div>
@@ -873,7 +917,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
 
           <div class="refhero">
             <div>
-              <div class="kick">참고 매뉴얼 · 실험과 따로 보는 정리</div>
+              <div class="kick">📘 참고 매뉴얼 · 실험과 따로 보는 정리</div>
               <h2>화학식에서 원소를 쓰는 순서는 정해져 있다</h2>
               <p>물은 H<sub>2</sub>O라고 쓰고 OH<sub>2</sub>라고 쓰지 않습니다. 암모니아는 NH<sub>3</sub>이지 H<sub>3</sub>N이 아니고요.
               모형이 같아도 <b>쓰는 순서는 하나</b>입니다. 그 순서를 정하는 두 기준 — <b>Hill 표기법</b>과
@@ -1586,6 +1630,7 @@ function showModal(id){
   lastFocus = document.activeElement;
   const m = $(id);
   $("#scrim").classList.add("on"); m.classList.add("on");
+  $("#stage").inert = true;      /* 모달 뒤 스테이지·조작 독은 잠근다 (§3.1) */
   openModal = m;
   const f = m.querySelector("input,button:not([data-close])");
   if(f) setTimeout(()=>f.focus(), 40);
@@ -1593,6 +1638,7 @@ function showModal(id){
 function closeModal(){
   if(openModal){ openModal.classList.remove("on"); openModal = null; }
   $("#scrim").classList.remove("on");
+  $("#stage").inert = false;
   if(lastFocus && lastFocus.focus) { lastFocus.focus(); lastFocus=null; }
 }
 function ask(title, msg, yes, no){
@@ -1657,7 +1703,7 @@ function benchSize(){
 function benchArea(){
   const {w,h} = benchSize();
   const dk = $("#dock1"), hud = bench.querySelector(".hud");
-  const top    = ((hud && hud.offsetHeight) || 46) + 22;
+  const top    = hud ? (hud.offsetTop + hud.offsetHeight + 12) : 98;
   const bottom = ((dk  && dk.offsetHeight)  || 80) + 22;
   const side   = 14;
   return {x0:side, x1:Math.max(side+60, w-side), y0:top, y1:Math.max(top+60, h-bottom), w, h};
@@ -1817,12 +1863,26 @@ function buildChips(){
     c.appendChild(b);
   });
 }
-/* 조립대 오른쪽 위 목표 알약 — 지금 무엇을 만드는 중인지 화면 안에서 알린다 */
-function setGoalPill(){
-  const g = $("#benchGoal");
-  if(!target){ g.hidden = true; return; }
+/* 조립대 배경의 큰 화학식 — 지금 무엇을 만드는 중인지 한눈에 알린다.
+   결합 전에는 이름만 보여 준다. 모양은 POE 예측(§12-4)의 답이므로 미리 말하지 않는다. */
+function setGhost(){
+  const g = $("#benchGhost");
+  const done = !!(bonded && placed.mol);
+  const mol  = done ? placed.mol : target;
+  if(!mol){ g.hidden = true; return; }
   g.hidden = false;
-  $("#goalV").innerHTML = target.ko+" "+fHTML(target.parts);
+  g.classList.toggle("done", done);
+  $("#ghostK").textContent = done ? "완성" : "만드는 중";
+  $("#ghostF").innerHTML   = fHTML(mol.parts);
+  $("#ghostN").textContent = done
+    ? mol.ko+" · "+(mol.shape==="단원자" ? "원자 1개가 성질을 나타냄" : mol.shape+" 모양")
+    : mol.ko;
+}
+
+/* 고른 칩이 띠 밖으로 밀려나 있으면 보이는 자리로 끌어온다 */
+function scrollChipIntoView(){
+  const b = $('#chips .chip[aria-pressed="true"]');
+  if(b && b.scrollIntoView) b.scrollIntoView({block:"nearest", inline:"center", behavior:REDUCE?"auto":"smooth"});
 }
 function guideIdle(){
   $("#g1").innerHTML = target
@@ -1835,26 +1895,31 @@ $("#chips").addEventListener("click", ev=>{
   [...$("#chips").children].forEach(x=>x.setAttribute("aria-pressed","false"));
   b.setAttribute("aria-pressed","true");
   target = b.dataset.id ? byId[b.dataset.id] : null;
-  clearBench(); buildPalette(); setupPoe(); setGoalPill();
+  clearBench(); buildPalette(); setupPoe(); scrollChipIntoView();
   $("#paletteTip").textContent = target
-    ? target.ko+" 분자를 만드는 데 필요한 원자예요."
-    : "원하는 원자를 자유롭게 담아 어떤 분자가 되는지 확인해 보세요.";
+    ? target.ko+" 분자에 필요한 원자에는 개수가 함께 표시돼요. 다른 원자도 올려 볼 수 있어요."
+    : "조립대에서 쓰는 원자 전부예요. 자유롭게 담아 어떤 분자가 되는지 확인해 보세요.";
   guideIdle();
 });
 
-/* --- 팔레트 --- */
+/* --- 팔레트 — 조립대에서 쓰는 원자를 늘 전부 늘어놓는다 --- */
+const LAB_SYMS = (function(){
+  const order = ["H","C","N","O","S","Cl","He","Na"], used = new Set();
+  MOLECULES.forEach(m=>m.atoms.forEach(a=>used.add(a.e)));
+  return order.filter(s=>used.has(s));
+})();
 function buildPalette(){
   const p = $("#palette"); p.textContent="";
-  const syms = target ? Object.keys(target.counts) : ["H","C","N","O","S","Cl","He"];
-  syms.forEach(s=>{
+  LAB_SYMS.forEach(s=>{
     const A = ATOMS[s];
+    const need = target ? (target.counts[s]||0) : 0;
     const b = document.createElement("button");
-    b.type="button"; b.className="atom-btn"; b.dataset.sym=s;
-    b.setAttribute("aria-label", A.ko+" 원자 올리기");
+    b.type="button"; b.className="atom-btn"+(need?" need":""); b.dataset.sym=s;
+    b.setAttribute("aria-label", A.ko+" 원자 올리기"+(need?" · "+need+"개 필요":""));
     b.innerHTML =
       '<span class="ball" style="background:radial-gradient(circle at 33% 28%,#fff,'+A.fill+' 52%,'+A.edge+')"></span>'+
       '<span class="lb"><b>'+s+'</b><span>'+A.ko+'</span></span>'+
-      '<span class="cnt num" data-cnt="'+s+'">0</span>';
+      '<span class="cnt num" data-cnt="'+s+'" data-need="'+need+'">0</span>';
     p.appendChild(b);
   });
   updateCounts();
@@ -1865,14 +1930,20 @@ $("#palette").addEventListener("click", ev=>{
 });
 function updateCounts(){
   const c = {}; placed.forEach(p=>c[p.e]=(c[p.e]||0)+1);
-  $$("#palette [data-cnt]").forEach(n=> n.textContent = c[n.dataset.cnt]||0);
-  const hud = $("#hudFormula");
+  $$("#palette [data-cnt]").forEach(el=>{
+    const sym = el.dataset.cnt, have = c[sym]||0, need = +el.dataset.need || 0;
+    el.innerHTML = need ? have+'<i>/'+need+'</i>' : String(have);
+    const btn = el.parentElement;
+    btn.classList.toggle("ok",   need>0 && have===need);
+    btn.classList.toggle("over", need>0 && have>need);
+  });
+  const hud = $("#hudFormula"), lbl = $("#hudLbl");
   if(bonded && placed.mol){
     hud.innerHTML = fHTML(placed.mol.parts);
-    hud.previousElementSibling.textContent = "완성한 분자";
+    lbl.textContent = "완성한 분자";
     return;
   }
-  hud.previousElementSibling.textContent = "지금 올린 원자";
+  lbl.textContent = "지금 올린 원자";
   const ks = Object.keys(c);
   hud.innerHTML = ks.length
     ? ks.map(e=>'<span style="color:'+ATOMS[e].fill+'">'+e+'</span>×'+c[e]).join('<span style="color:var(--ink-3)"> · </span>')
@@ -1934,6 +2005,7 @@ function renderBench(){
   fitSvg(benchSvg);
   const {w,h} = benchSize();
   benchSvg.textContent = "";
+  setGhost();
   $("#benchEmpty").style.display = placed.length ? "none" : "grid";
 
   if(bonded && placed.mol && placed.pose){
@@ -2082,10 +2154,11 @@ function finishBond(mol, pose){
   pose.fx = pose.ox/w; pose.fy = pose.oy/h;
   animating = false; bonded = true; placed.mol = mol; placed.pose = pose;
   drawMoleculeAt(benchSvg, mol, molPoints(mol, pose.ox, pose.oy, WSCALE, pose), {scale:WSCALE});
+  setGhost();                     /* 배경 화학식을 "완성"으로 바꾼다 */
   updateCounts();                 /* HUD를 "완성한 분자"로 바꾼다 */
   collected.add(mol.id); store.set("dex",[...collected]);
   SFX.ok();
-  renderDex(); buildChips(); markSteps();
+  renderDex(); buildChips(); scrollChipIntoView(); markSteps();
   judgePoe(mol);
   showSuccess(mol);
   setBondUI();
@@ -3284,7 +3357,7 @@ document.addEventListener("keydown", ev=>{
   if(narrow.addEventListener) narrow.addEventListener("change", syncSns);
   else if(narrow.addListener) narrow.addListener(syncSns);   /* 구형 사파리 */
 
-  buildChips(); buildPalette(); renderDex(); setupPoe(); buildTerms(); buildRef(); setGoalPill();
+  buildChips(); buildPalette(); renderDex(); setupPoe(); buildTerms(); buildRef();
   startQuiz(true); startMis(true); buildWrite(); markSteps();
   showTab("t1");
   setTimeout(fitAll, 80);
