@@ -456,6 +456,23 @@ html[data-theme="light"] .hud{background:rgba(255,255,255,.76)}
 .modelbox mark{background:transparent;color:var(--ink);font-weight:800}
 .lockrow{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3)}
 
+/* 모범 답안을 보고 다시 쓰기 — 처음 답안은 잠긴 채 두고, 새 칸에 다시 정리한다 (§9) */
+.revbox{border:1px solid color-mix(in srgb,var(--violet) 42%,transparent);
+  background:color-mix(in srgb,var(--violet) 11%,transparent);border-radius:var(--r2);padding:var(--sp3);display:none}
+.revbox.show{display:block}
+.revbox .k{font-size:10.5px;font-weight:800;color:var(--violet);display:block;margin-bottom:4px}
+.revbox .sub{font-size:12px;color:var(--ink-3);line-height:1.6;margin-bottom:8px}
+.revbox .sub b{color:var(--ink-2)}
+.revbox textarea{
+  width:100%;min-height:96px;resize:vertical;border:1px solid var(--line);border-radius:var(--r2);
+  background:var(--panel-2);color:var(--ink);font-family:inherit;font-size:13.5px;line-height:1.65;padding:11px 13px;
+}
+.revbox textarea:focus{outline:2px solid var(--focus);outline-offset:1px}
+.revbox .rmeta{display:flex;align-items:center;margin-top:6px}
+.revbox .rchars{font-size:12px;color:var(--ink-3);margin-left:auto}
+.bdg.r{border-color:color-mix(in srgb,var(--violet) 50%,transparent);
+  background:color-mix(in srgb,var(--violet) 13%,transparent);color:var(--violet)}
+
 /* ============ 탭5 · 분자식 표기 순서 (참고 매뉴얼) ============ */
 .ref{grid-template-rows:minmax(0,1fr) auto;padding:var(--sp3);gap:var(--sp2);min-height:0}
 .refscroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:4px;min-height:0}
@@ -905,7 +922,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         <div class="row">
           <button class="btn save" id="w2Report" type="button">학습 리포트 만들기</button>
         </div>
-        <p class="guide">힌트는 답안을 잠그지 않아요. 모범 답안을 열면 수정이 잠깁니다.</p>
+        <p class="guide">힌트는 답안을 잠그지 않아요. 모범 답안을 열면 처음 답안이 잠기고, 그 아래 ✏️ 다시 쓰기 칸이 열립니다.</p>
       </div>
     </section>
 
@@ -1115,7 +1132,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     화학식 표기 순서는 IUPAC <i>Nomenclature of Inorganic Chemistry</i>(Red Book, 2005) IR-4.4의 원소 배열 순서와
     E. A. Hill, <i>J. Am. Chem. Soc.</i> 22(8), 478–494 (1900)을 참고했습니다.</p>
     <h3>저장되는 정보</h3>
-    <p class="privacy">학번·이름, 서술형 답안과 잠금 상태, 힌트·모범 답안 열람 기록, 퀴즈와 미션 기록, 화면 설정이
+    <p class="privacy">학번·이름, 서술형 답안·다시 쓴 답안과 잠금 상태, 힌트·모범 답안 열람 기록, 퀴즈와 미션 기록, 화면 설정이
     <b>이 컴퓨터의 브라우저에만</b> 저장됩니다. 서버로 보내지 않습니다.</p>
     <button class="btn sm" id="btnReset" type="button" style="border-color:var(--bad);color:var(--bad)">저장된 기록 모두 지우기</button>
     <h3>만든 사람</h3>
@@ -1148,7 +1165,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <button class="ib" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
   </div>
   <div class="m-body">
-    <h3>1. 학습 리포트 — 내 답안과 모범 답안 비교</h3>
+    <h3>1. 학습 리포트 — 내 답안 · 모범 답안 · 다시 쓴 답안 비교</h3>
     <div class="opts-list">
       <label class="opt-row"><input type="checkbox" id="oWrite" checked><span>탐구 질문 서술형 답안</span></label>
       <label class="opt-row"><input type="checkbox" id="oModel" checked><span>모범 답안 함께 인쇄</span></label>
@@ -1386,7 +1403,7 @@ const QUIZ = [
    opts:["원자의 종류가 다르기 때문","결합한 원자의 개수가 다르기 때문",
          "오존은 원소이고 산소는 화합물이기 때문","오존에는 원자핵이 없기 때문"],
    a:1,
-   why:"둘 다 산소 원자로만 이루어져 있지만 결합한 개수가 2개와 3개로 다릅니다. 원자가 결합하는 개수와 방법이 달라지면 다른 분자가 되고 성질도 달라져요.",
+   why:"둘 다 산소 원자로만 이루어져 있지만 결합한 개수가 2개(O₂)와 3개(O₃)로 다릅니다. 원자의 종류가 같아도 결합한 개수가 달라지면 다른 분자가 되고 성질도 달라져요.",
    short:"결합한 원자의 개수가 다르면 다른 물질이 됩니다."}
 ];
 
@@ -1396,13 +1413,13 @@ const QUIZ = [
 const WQ = [
   {id:"w1", code:"[9과11-04] 분자와 물질의 성질",
    q:"물 분자를 산소 원자 1개와 수소 원자 2개로 다시 나누면 물의 성질은 어떻게 될까요? 그렇게 생각한 까닭과 함께 설명해 보세요.",
-   hint:"조립대에서 물(H₂O)을 완성한 뒤 [분해하기]를 눌러 원자로 되돌려 보세요. 화면 왼쪽 위 ‘지금 올린 원자’ 표시가 어떻게 바뀌는지 보고 문장으로 옮겨 적어도 좋아요.",
-   model:"분자는 <mark>물질의 성질을 나타내는 입자</mark>입니다. 물 분자가 수소 원자와 산소 원자로 나누어지면 더 이상 물 분자가 아니므로 물의 성질도 사라집니다. 원자들이 결합해 분자를 이룰 때 비로소 그 물질의 성질이 나타납니다.",
+   hint:"조립대에서 물(H₂O)을 완성한 뒤 [분해하기]를 눌러 원자로 되돌려 보세요. 조립대 위 표시가 <b>‘완성한 분자 H₂O’</b>에서 <b>‘지금 올린 원자 H×2 · O×1’</b>로 바뀝니다. 이때 화면에 남아 있는 것이 <b>물인지, 낱개 원자인지</b> 생각해 문장으로 옮겨 보세요.",
+   model:"물의 성질은 <mark>사라집니다</mark>. 물질의 성질을 나타내는 가장 작은 입자는 <mark>분자</mark>인데, 물 분자가 수소 원자와 산소 원자로 나누어지면 더 이상 물 분자가 아니기 때문입니다. 나누어진 수소 원자와 산소 원자는 물과 전혀 다른 성질을 가지며, 원자들이 다시 결합해 물 분자를 이룰 때에야 물의 성질이 나타납니다.",
    keys:["분자","성질","결합"]},
   {id:"w2", code:"[9과11-01] 원자의 개수와 물질의 종류",
    q:"산소(O₂)와 오존(O₃)은 모두 산소 원자로만 이루어져 있는데도 서로 다른 물질입니다. 그 까닭을 설명해 보세요.",
    hint:"조립대에서 산소와 오존을 차례로 만들어 도감에 나란히 놓아 보세요. 두 모형에서 구슬의 색과 개수 중 무엇이 같고 무엇이 다른지 세어 보면 됩니다.",
-   model:"두 분자는 모두 산소 원자로 이루어져 있지만 <mark>결합한 원자의 개수</mark>가 다릅니다. 산소는 산소 원자 2개, 오존은 3개가 결합했습니다. 원자의 종류가 같아도 결합하는 개수와 방법이 다르면 다른 분자가 되고 성질도 달라집니다. 그래서 오존은 산소와 달리 지표에서 호흡기에 해로운 영향을 줍니다.",
+   model:"두 분자는 모두 산소 원자로만 이루어져 있지만 <mark>결합한 원자의 개수</mark>가 다릅니다. 산소는 산소 원자 2개(O₂), 오존은 3개(O₃)가 결합했습니다. 원자의 종류가 같아도 <mark>결합한 개수가 달라지면 서로 다른 분자</mark>가 되고 성질도 달라집니다. 그래서 오존은 산소와 달리 특유의 냄새가 나고, 지표 부근에 많아지면 호흡기에 해로운 영향을 줍니다.",
    keys:["개수","다른 물질","성질"]},
   {id:"w3", code:"[9과11-01] 화학식 표기 규칙",
    q:"이산화 탄소를 CO₂라고 쓰고 O₂C라고 쓰지 않는 까닭은 무엇인가요? 그리고 CO₂에서 아래첨자 2가 무엇을 뜻하는지도 함께 설명해 보세요.",
@@ -1412,12 +1429,12 @@ const WQ = [
   {id:"w4", code:"[9과11-04] 원자가 성질을 나타내는 물질",
    q:"헬륨(He)의 화학식에는 아래첨자가 없습니다. 헬륨은 어떤 입자가 물질의 성질을 나타내는지 산소(O₂)와 비교해 설명해 보세요.",
    hint:"분류 미션 탭에서 헬륨 카드와 산소 카드를 각각 만나면 모형에 구슬이 몇 개 그려지는지 세어 보세요. 두 모형의 구슬 개수 차이가 답의 실마리입니다.",
-   model:"산소는 산소 원자 2개가 결합한 <mark>산소 분자</mark>가 물질의 성질을 나타냅니다. 반면 헬륨은 다른 원자와 거의 결합하지 않고 <mark>원자 1개가 그대로</mark> 물질의 성질을 나타냅니다. 그래서 화학식을 He라고만 쓰고, 원자가 1개일 때는 숫자 1을 생략합니다.",
+   model:"산소는 산소 원자 2개가 결합한 <mark>산소 분자(O₂)</mark>가 물질의 성질을 나타냅니다. 반면 헬륨은 다른 원자와 거의 결합하지 않고 <mark>원자 1개가 그대로</mark> 물질의 성질을 나타내며, 이런 입자를 <mark>단원자 분자</mark>라고 합니다. 그래서 화학식을 He라고만 쓰고, 원자가 1개일 때는 숫자 1을 생략합니다.",
    keys:["원자","분자","1개"]},
   {id:"w5", code:"[9과11-01] 생태전환 · 지구 환경에 영향을 미치는 물질",
    q:"분류 미션에 나온 물질 중 지구 환경에 영향을 주는 물질을 하나 골라 화학식으로 쓰고, 그 물질이 원소인지 화합물인지 구분한 뒤 그렇게 판단한 까닭을 설명해 보세요.",
    hint:"분류 미션 탭에서 카드 아래 초록색 지구 메모를 읽어 보세요. 그런 다음 그 물질의 모형에 <b>몇 종류</b>의 색 구슬이 있는지 세면 원소인지 화합물인지 판단할 수 있어요.",
-   model:"이산화 탄소(CO₂)는 <mark>화합물</mark>입니다. 탄소 원자와 산소 원자, 즉 <mark>두 종류 이상의 입자</mark>가 모여 만들어졌기 때문입니다. 이산화 탄소는 온실 기체여서 농도가 높아지면 지구 온난화를 일으킵니다. 반면 오존(O₃)은 산소 원자 한 종류로만 이루어져 있으므로 원소입니다.",
+   model:"이산화 탄소(CO₂)는 <mark>화합물</mark>입니다. 탄소와 산소, 즉 <mark>두 종류 이상의 원소</mark>가 결합해 만들어진 물질이기 때문입니다. 이산화 탄소는 온실 기체여서 대기 중 농도가 높아지면 지구 온난화를 일으킵니다. 반면 오존(O₃)은 <mark>산소 한 종류의 원소로만</mark> 이루어져 있으므로 원소입니다.",
    keys:["화합물","두 종류","원소"]}
 ];
 const MINLEN = 20;
@@ -2617,7 +2634,7 @@ const MIS_HTML = $("#misBody").innerHTML;
    12. 탭4 — 서술형 탐구 질문 (§9)
    ============================================================ */
 let ans = store.get("ans", {});   /* {w1:{t:"", locked:false, hinted:false}} */
-function ansOf(id){ if(!ans[id]) ans[id]={t:"",locked:false,hinted:false}; return ans[id]; }
+function ansOf(id){ if(!ans[id]) ans[id]={t:"",rev:"",locked:false,hinted:false}; if(ans[id].rev===undefined) ans[id].rev=""; return ans[id]; }
 function saveAns(){ store.set("ans", ans); }
 
 function buildWrite(){
@@ -2640,17 +2657,27 @@ function buildWrite(){
         '</div>'+
         '<div class="hintbox" data-hintbox><span class="k">힌트 · 어디를 보면 될까요</span>'+q.hint+
           '<span class="lock">힌트는 답안을 잠그지 않아요. 몇 번이든 열어 봐도 괜찮습니다.</span></div>'+
-        '<div class="lockrow" data-lockrow hidden>🔒 모범 답안을 본 문항이라 답안은 그대로 남겨 두었어요.</div>'+
+        '<div class="lockrow" data-lockrow hidden>🔒 처음 답안은 그대로 남겨 두었어요. 아래 다시 쓰기 칸에 새로 정리해 보세요.</div>'+
         '<div class="modelbox" data-modelbox><span class="k">모범 답안 · 이렇게 쓰면 좋아요</span>'+q.model+'</div>'+
+        '<div class="revbox" data-revbox><span class="k">✏️ 모범 답안을 보고 다시 쓰기</span>'+
+          '<div class="sub">처음 쓴 답안은 그대로 남습니다. 모범 답안과 견주어 빠뜨린 내용을 채워 <b>내 문장으로 다시</b> 정리해 보세요.</div>'+
+          '<textarea data-rev placeholder="모범 답안에서 새로 알게 된 내용을 넣어 다시 써 보세요." aria-label="'+(i+1)+'번 문항 다시 쓴 답안"></textarea>'+
+          '<div class="rmeta"><span class="rchars num" data-rchars>0자</span></div>'+
+        '</div>'+
       '</div>';
     list.appendChild(d);
 
-    const ta = d.querySelector("textarea");
+    const ta = d.querySelector(".qc-body > textarea");
     ta.value = a.t || "";
-    if(a.locked){ ta.readOnly = true; d.querySelector("[data-modelbox]").classList.add("show"); }
+    const rta = d.querySelector("[data-rev]");
+    rta.value = a.rev || "";
+    if(a.locked){ ta.readOnly = true; d.querySelector("[data-modelbox]").classList.add("show"); d.querySelector("[data-revbox]").classList.add("show"); }
     if(a.hinted) d.querySelector("[data-hintbox]").classList.add("show");
     ta.addEventListener("input", ()=>{
       a.t = ta.value; saveAns(); refreshCard(d, q); updateWCount();
+    });
+    rta.addEventListener("input", ()=>{
+      a.rev = rta.value; saveAns(); refreshCard(d, q);
     });
     d.querySelector("[data-hint]").addEventListener("click", ()=>{
       const box = d.querySelector("[data-hintbox]");
@@ -2661,14 +2688,16 @@ function buildWrite(){
     d.querySelector("[data-model]").addEventListener("click", async ()=>{
       if(a.locked){ d.querySelector("[data-modelbox]").classList.toggle("show"); return; }
       const ok = await ask("모범 답안을 볼까요?",
-        "모범 답안을 보면 <b>이 문항의 내 답안은 더 이상 고칠 수 없어요.</b> 지금 볼까요?",
+        "모범 답안을 보면 <b>지금까지 쓴 이 문항의 답안은 더 이상 고칠 수 없어요.</b> 대신 모범 답안 아래에 <b>✏️ 다시 쓰기 칸</b>이 열려요. 처음 답안과 다시 쓴 답안이 모두 리포트에 인쇄됩니다. 지금 볼까요?",
         "모범 답안 보고 잠그기", "조금 더 써 볼게요");
       if(!ok) return;
       a.locked = true; saveAns();
       ta.readOnly = true;
       d.querySelector("[data-modelbox]").classList.add("show");
+      d.querySelector("[data-revbox]").classList.add("show");
       refreshCard(d, q); SFX.pop();
-      toast("모범 답안을 열었어요. 이 문항의 답안은 그대로 남겨 둡니다.");
+      toast("모범 답안을 열었어요. 아래 ‘다시 쓰기’ 칸에 새로 정리해 보세요.");
+      setTimeout(()=>{ rta.scrollIntoView({block:"nearest", behavior:"smooth"}); rta.focus(); }, 180);
     });
     refreshCard(d, q);
   });
@@ -2686,11 +2715,14 @@ function refreshCard(d, q){
   let h = "";
   if(len>0) h += '<span class="bdg w">작성함</span>';
   if(a.hinted) h += '<span class="bdg h">힌트 봄</span>';
-  if(a.locked) h += '<span class="bdg l">모범 답안 열람 · 수정 잠김</span>';
+  if(a.locked) h += '<span class="bdg l">처음 답안 잠김</span>';
+  if((a.rev||"").trim().length >= 5) h += '<span class="bdg r">다시 씀</span>';
   bs.innerHTML = h;
-  const ta = d.querySelector("textarea");
+  const ta = d.querySelector(".qc-body > textarea");
   ta.readOnly = !!a.locked;
   d.querySelector("[data-lockrow]").hidden = !a.locked;
+  const rc = d.querySelector("[data-rchars]");
+  if(rc) rc.textContent = (a.rev||"").trim().length + "자";
 }
 $("#qlist").addEventListener("click", ev=>{
   const b = ev.target.closest("[data-model]");
@@ -3103,15 +3135,19 @@ function buildReport(){
     h += '<div class="pr-sec"><h2>탐구 질문 서술형 답안</h2>';
     WQ.forEach((q,i)=>{
       const a = ansOf(q.id);
+      const rev = (a.rev||"").trim();
       const tags = [];
       tags.push(a.locked ? "모범 답안 열람함" : "열람 전 스스로 작성");
       if(a.hinted) tags.push("힌트 봄");
+      if(rev) tags.push("모범 답안 보고 다시 씀");
       h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+esc(q.q)+'</p>'+
            '<p class="tags">'+esc(q.code)+' · '+tags.join(" · ")+'</p>'+
            '<div class="pr-cmp">'+
-             '<div class="b"><span class="lb">내가 쓴 답안</span>'+esc(a.t||"(아직 쓰지 않았어요)")+'</div>'+
+             '<div class="b"><span class="lb">'+(rev?"처음 쓴 답안":"내가 쓴 답안")+'</span>'+esc(a.t||"(아직 쓰지 않았어요)")+'</div>'+
              (wantM?'<div class="b"><span class="lb">모범 답안</span>'+stripTag(q.model)+'</div>':'')+
-           '</div></div>';
+           '</div>'+
+           (rev?'<div class="pr-cmp" style="margin-top:2mm"><div class="b"><span class="lb">모범 답안을 보고 다시 쓴 답안</span>'+esc(rev)+'</div></div>':'')+
+           '</div>';
     });
     h += '</div>';
   }
@@ -3165,7 +3201,9 @@ function buildBlank(withAnswer){
   h += '<div class="pr-sec"><h2>서술형 탐구 질문</h2>';
   WQ.forEach((q,i)=>{
     h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+esc(q.q)+'</p><p class="tags">'+esc(q.code)+'</p>'+
-         '<div class="pr-lines"><i></i><i></i><i></i><i></i><i></i></div></div>';
+         '<div class="pr-lines"><i></i><i></i><i></i><i></i><i></i></div>'+
+         '<p class="tags" style="margin-top:2mm">모범 답안을 보고 다시 쓴 답안</p>'+
+         '<div class="pr-lines"><i></i><i></i><i></i></div></div>';
   });
   h += '</div><div class="pr-sec"><h2>대표 퀴즈 문항</h2>';
   QUIZ.forEach((q,i)=>{
@@ -3303,7 +3341,7 @@ $("#volRange").addEventListener("change", ()=>{ volHover=false; showVolPop(); })
 
 $("#btnReset").addEventListener("click", async ()=>{
   const ok = await ask("저장된 기록을 모두 지울까요?",
-    "학번·이름, 서술형 답안과 <b>모범 답안 잠금</b>, 힌트 열람 기록, 퀴즈·분류 미션 기록, 만든 분자 도감이 모두 지워져요. 되돌릴 수 없습니다.",
+    "학번·이름, 서술형 답안·다시 쓴 답안과 <b>모범 답안 잠금</b>, 힌트 열람 기록, 퀴즈·분류 미션 기록, 만든 분자 도감이 모두 지워져요. 되돌릴 수 없습니다.",
     "모두 지우기", "그대로 둘게요");
   if(!ok) return;
   ["id","ans","quiz","mis","dex","set","student"].forEach(k=>store.del(k));
