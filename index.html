@@ -17,6 +17,7 @@
    구성 — 「분자 모형과 화학식」 실험실에 체험버전 「분자식 만들기」의
           아래첨자·계수 개념을 합쳤다.
      탭1 분자 조립대      원자 → 결합 → 분자 모형 (POE 예측 · 도감)
+                          사이드에 「분자식 나타내는 방법」 3단계 도해를 함께 둔다
      탭2 분자식 쓰기      모형 읽기 / 분자 수  ← 장면 안 모드 스위치
                           계수(식 앞)와 아래첨자(기호 오른쪽 아래)를 가른다
      탭3 원소·화합물 분류  생태전환 연계 미션
@@ -413,6 +414,38 @@ html[data-theme="light"] .hud{background:rgba(255,255,255,.76)}
 .poe .opt{flex:1 1 0;min-width:76px;min-height:44px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:var(--r2);font-size:12px;font-weight:700;cursor:pointer}
 .poe .opt[aria-pressed="true"]{border-color:var(--warn);background:var(--warn-soft);color:var(--ink)}
 .poe .res{margin:var(--sp2) 0 0;font-size:12px;line-height:1.55}
+
+/* 분자식 나타내는 방법 — 사이드 3단계 요약 (이론 책자 카드의 축약판) */
+.mfx{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.mfx .st{
+  position:relative;background:var(--panel-2);border:1px solid var(--line);
+  border-left:3px solid var(--c);border-radius:var(--r2);padding:9px 11px 10px;
+}
+.mfx .st.s1{--c:var(--brand-blue-lit)}
+.mfx .st.s2{--c:var(--ok)}
+.mfx .st.s3{--c:var(--violet)}
+/* 단계 사이의 진행 방향 — 그림의 화살표를 세로로 세운다 */
+.mfx .st+.st::before{
+  content:"";position:absolute;left:16px;top:-10px;width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--line);
+}
+.mfx .hd{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.mfx .hd .n{
+  flex:0 0 19px;width:19px;height:19px;border-radius:6px;display:grid;place-items:center;
+  font-size:11px;font-weight:900;color:var(--c);
+  background:var(--panel-3);background:color-mix(in oklab,var(--c) 22%,transparent);
+}
+.mfx .hd b{font-size:13px;font-weight:800;letter-spacing:-.01em;line-height:1.3}
+.mfx .st>p{margin:0;font-size:12px;line-height:1.55;color:var(--ink-2)}
+.mfx .st>p b{color:var(--ink);font-weight:800}
+.mfx .fig{margin-top:7px;padding:4px 5px;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel)}
+.mfx .fig svg{display:block;width:100%;height:auto}
+.mfx .st>p.note{
+  margin-top:7px;padding:4px 8px;border:1px solid var(--warn-line);background:var(--warn-soft);
+  border-radius:6px;color:var(--warn);font-size:11.5px;font-weight:700;line-height:1.5;
+}
+.mfx .st>p.note sub{font-size:.66em}
+.mfx-more{width:100%;justify-content:center;margin-top:9px}
 
 /* 결과 */
 .result{border-radius:var(--r2);padding:var(--sp3);border:1px solid var(--line);background:var(--panel-2);font-size:13px;line-height:1.6}
@@ -1028,6 +1061,32 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
             <button class="opt" type="button" data-v="입체" aria-pressed="false">입체 모양</button>
           </div>
           <p class="res" id="poeRes" hidden></p>
+        </div>
+
+        <!-- 분자식 나타내는 방법 — 원소 기호 → 원자 수 → 분자 수 (이론 책자 카드 4·8의 요약) -->
+        <div>
+          <h2 class="h-sec">분자식 나타내는 방법</h2>
+          <p class="tip">원소 기호 → 원자 수 → 분자 수, 세 단계로 씁니다.</p>
+          <div style="height:8px"></div>
+          <ol class="mfx" id="howSteps" role="list">
+            <li class="st s1">
+              <div class="hd"><span class="n" aria-hidden="true">1</span><b>1단계 · 원소 기호 쓰기</b></div>
+              <p>원자의 종류를 원소 기호로 나타냅니다.</p>
+              <div class="fig"></div>
+            </li>
+            <li class="st s2">
+              <div class="hd"><span class="n" aria-hidden="true">2</span><b>2단계 · 원자 수 표시하기</b></div>
+              <p>원자의 개수를 원소 기호의 <b>오른쪽 아래</b>에 작게 씁니다.</p>
+              <div class="fig"></div>
+              <p class="note">1은 생략해요 — 산소 1개는 O<sub>1</sub>이 아니라 O.</p>
+            </li>
+            <li class="st s3">
+              <div class="hd"><span class="n" aria-hidden="true">3</span><b>3단계 · 분자 수 표시하기</b></div>
+              <p>분자가 여러 개면 분자식 <b>앞</b>에 분자의 개수를 씁니다. 1개일 때는 쓰지 않아요.</p>
+              <div class="fig"></div>
+            </li>
+          </ol>
+          <button class="btn sm ghost mfx-more" id="howMore" type="button">책자에서 자세히 보기</button>
         </div>
 
         <div>
@@ -1896,13 +1955,13 @@ function fitSvg(svg){
    6. 테마 · 사운드 · 전체화면
    ============================================================ */
 const DIA = {
-  dark : {FG:"#E9EFFA", FG2:"#A6B3CB", FG3:"#71809B", LINE:"#3A465F", PANEL:"#1A2434", ACC:"#54A8FF", OK:"#4FD9A6", WARN:"#FFD25C"},
-  light: {FG:"#141D34", FG2:"#485875", FG3:"#7D8DAA", LINE:"#C3CFE2", PANEL:"#EEF3FB", ACC:"#1B6FD6", OK:"#0E8C63", WARN:"#9A6A00"}
+  dark : {FG:"#E9EFFA", FG2:"#A6B3CB", FG3:"#71809B", LINE:"#3A465F", PANEL:"#1A2434", ACC:"#54A8FF", OK:"#4FD9A6", WARN:"#FFD25C", VIO:"#B98CFF"},
+  light: {FG:"#141D34", FG2:"#485875", FG3:"#7D8DAA", LINE:"#C3CFE2", PANEL:"#EEF3FB", ACC:"#1B6FD6", OK:"#0E8C63", WARN:"#9A6A00", VIO:"#6E42C1"}
 };
 function themeName(){ return document.documentElement.getAttribute("data-theme")==="light" ? "light" : "dark"; }
 function inject(svgText){
   const t = DIA[themeName()];
-  return svgText.replace(/\{(FG3|FG2|FG|LINE|PANEL|ACC|OK|WARN)\}/g, (m,k)=>t[k]);
+  return svgText.replace(/\{(FG3|FG2|FG|LINE|PANEL|ACC|OK|WARN|VIO)\}/g, (m,k)=>t[k]);
 }
 function setTheme(mode){
   document.documentElement.setAttribute("data-theme", mode);
@@ -1914,6 +1973,7 @@ function setTheme(mode){
   saveSettings();
   renderDrawerCard();          /* 켜 둔 도해도 다시 그린다 */
   refreshRefFig();             /* 참고 매뉴얼 도해도 함께 */
+  refreshHowFig();             /* 사이드 3단계 도해도 함께 */
   buildKeys(); buildLegend();  /* 원소 기호 색을 테마에 맞춰 다시 계산 */
   if(curTab==="t1") renderBench();
   if(curTab==="t2") redrawQuiz();
@@ -2613,6 +2673,61 @@ function renderDex(){
   $("#dexCount").textContent = collected.size;
   $("#dexTotal").textContent = MOLECULES.length;
 }
+
+/* ---- 분자식 나타내는 방법 — 사이드 3단계 도해 ----
+   구슬 색은 CPK 키트 그대로 두고, 글자·배경색만 테마에 맞춰 주입한다 (§8) */
+const hq = v => Math.round(v*10)/10;
+/* 물 분자 구슬 모형 한 벌 — s는 크기 배율, lab이면 구슬에 원소 기호를 적는다 */
+function howMol(cx,cy,s,lab){
+  const R=hq(17*s), r=hq(11*s), lx=hq(cx-23*s), rx=hq(cx+23*s), ly=hq(cy-22*s), bw=hq(5.5*s);
+  const bond = (x2,y2) => '<line x1="'+cx+'" y1="'+cy+'" x2="'+x2+'" y2="'+y2+'" stroke="#8FA0BE" '+
+                          'stroke-width="'+bw+'" stroke-opacity=".5" stroke-linecap="round"/>';
+  const h = x => '<circle cx="'+x+'" cy="'+ly+'" r="'+r+'" fill="#F2F4F8" stroke="#AAB4C4"/>';
+  return bond(lx,ly) + bond(rx,ly) + h(lx) + h(rx) +
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="#E8433A"/>' +
+    (lab
+      ? '<text x="'+cx+'" y="'+hq(cy+5.4*s)+'" text-anchor="middle" fill="#fff" font-size="'+hq(15*s)+'" font-weight="800">O</text>'+
+        '<text x="'+lx+'" y="'+hq(ly+4*s)+'" text-anchor="middle" fill="#2B3550" font-size="'+hq(11*s)+'" font-weight="800">H</text>'+
+        '<text x="'+rx+'" y="'+hq(ly+4*s)+'" text-anchor="middle" fill="#2B3550" font-size="'+hq(11*s)+'" font-weight="800">H</text>'
+      : '');
+}
+const HOW_ARROW = x => '<text x="'+x+'" y="54" text-anchor="middle" fill="{FG2}" font-size="19" font-weight="800">→</text>';
+const HOW_FIG = [
+  /* 1단계 — 구슬의 종류를 원소 기호로 */
+  ()=>'<svg viewBox="0 0 300 80" role="img" aria-label="물 분자 모형에서 수소 원자는 H로, 산소 원자는 O로 나타낸다">'+
+    howMol(52,50,1,true) + HOW_ARROW(110) +
+    '<rect x="136" y="14" width="152" height="24" rx="8" fill="{PANEL}" stroke="{LINE}"/>'+
+    '<text x="150" y="30" fill="{FG2}" font-size="11.5" font-weight="700">수소</text>'+
+    '<text x="196" y="30" fill="{FG3}" font-size="12">→</text>'+
+    '<text x="228" y="31" fill="{ACC}" font-size="15" font-weight="800">H</text>'+
+    '<rect x="136" y="46" width="152" height="24" rx="8" fill="{PANEL}" stroke="{LINE}"/>'+
+    '<text x="150" y="62" fill="{FG2}" font-size="11.5" font-weight="700">산소</text>'+
+    '<text x="196" y="62" fill="{FG3}" font-size="12">→</text>'+
+    '<text x="228" y="63" fill="#E8433A" font-size="15" font-weight="800">O</text></svg>',
+  /* 2단계 — 원자 수는 기호 오른쪽 아래에 */
+  ()=>'<svg viewBox="0 0 300 80" role="img" aria-label="물 분자 1개는 수소 원자 2개와 산소 원자 1개, 분자식은 H2O">'+
+    howMol(46,46,.86,true) + HOW_ARROW(104) +
+    '<text x="204" y="50" text-anchor="middle" font-size="32" font-weight="800">'+
+      '<tspan fill="{FG}">H</tspan><tspan fill="{OK}" font-size="19" dy="7">2</tspan>'+
+      '<tspan fill="{FG}" font-size="32" dy="-7">O</tspan></text>'+
+    '<text x="204" y="70" text-anchor="middle" fill="{FG3}" font-size="10.5">수소 2개 · 산소 1개</text></svg>',
+  /* 3단계 — 분자 수는 식 앞에 */
+  ()=>'<svg viewBox="0 0 300 80" role="img" aria-label="물 분자 3개는 분자식 앞에 3을 써서 3H2O로 나타낸다">'+
+    howMol(28,28,.58,false) + howMol(79,28,.58,false) + howMol(53,63,.58,false) + HOW_ARROW(120) +
+    '<text x="212" y="50" text-anchor="middle" font-size="30" font-weight="800">'+
+      '<tspan fill="{VIO}">3</tspan><tspan fill="{FG}">H</tspan>'+
+      '<tspan fill="{FG}" font-size="18" dy="6">2</tspan><tspan fill="{FG}" font-size="30" dy="-6">O</tspan></text>'+
+    '<text x="212" y="70" text-anchor="middle" fill="{FG3}" font-size="10.5">앞의 숫자 = 물 분자 3개</text></svg>'
+];
+function refreshHowFig(){
+  $$("#howSteps .fig").forEach((box,i)=>{ if(HOW_FIG[i]) box.innerHTML = inject(HOW_FIG[i]()); });
+}
+/* 같은 내용을 더 깊게 다룬 이론 카드로 넘긴다 — 번호가 아니라 제목으로 찾는다 */
+$("#howMore").addEventListener("click", ()=>{
+  const i = CARDS.findIndex(c=>/아래첨자와 계수/.test(c.t));
+  openDrawer(i<0 ? 3 : i);
+});
+
 $("#sheetHandle").addEventListener("click", function(){
   const s = $("#side"), on = s.classList.toggle("open");
   this.setAttribute("aria-expanded", on?"true":"false");
@@ -4026,6 +4141,7 @@ $("#resumeNo").addEventListener("click", ()=>{
   renderPrivacyNote();
 
   buildChips(); buildPalette(); renderDex(); setupPoe(); buildTerms(); buildRef(); buildExpSelect();
+  refreshHowFig();
   startQuiz(true); startMis(true); buildWrite(); markSteps();
   showTab("t1");
   setTimeout(fitAll, 80);
