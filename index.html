@@ -570,13 +570,6 @@ body.present .tok{font-size:34px}
 .keygrp.coefgrp .kl{color:var(--warn)}
 .key.coef{color:var(--warn);font-weight:800}
 .keygrp .kl span{font-weight:500;color:var(--ink-3);margin-left:5px}
-/* 문제 조건 — 몇 개인지는 알려 주고, 어디에 쓸지는 학생이 정한다 */
-.qcond{
-  position:absolute;left:var(--sp3);top:var(--sp3);z-index:3;
-  background:var(--panel-3);border:1px solid var(--line);border-radius:var(--r-pill);
-  padding:5px 11px;font-size:var(--fs-label);font-weight:500;color:var(--ink-2);
-}
-.qcond b{color:var(--ink);font-weight:800}
 .tok{font-size:26px;font-weight:800;letter-spacing:.01em;line-height:1.1}
 .tok sub{font-size:.55em}
 .tok.warn{color:var(--warn)}
@@ -595,12 +588,12 @@ body.present .tok{font-size:34px}
 /* '1'은 쓰지 않는 숫자 — 키는 보이되 입력되지 않는다.
    누르는 순간 그 자리에서 규칙을 알려 주므로 1H₂O가 화면에 만들어질 일이 없다 */
 .key.off{
-  min-width:58px;border-style:dashed;background:transparent;color:var(--ink-3);
-  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;
+  min-width:62px;border-style:dashed;background:transparent;color:var(--ink-3);
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1;
 }
-.key.off .d{font-size:15px;font-weight:800;text-decoration:line-through;text-decoration-thickness:2px}
-.key.off.sub .d{font-size:17px}
-.key.off .t{font-size:10px;font-weight:700;letter-spacing:-.02em}
+.key.off .d{font-size:18px;font-weight:800;text-decoration:line-through;text-decoration-thickness:2px}
+.key.off.sub .d{font-size:20px}
+.key.off .t{font-size:10px;font-weight:700;letter-spacing:-.02em;opacity:.9}
 .key.off:hover{border-color:var(--warn-line);color:var(--warn)}
 .key.off.buzz{animation:keybuzz .3s ease}
 @keyframes keybuzz{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
@@ -620,7 +613,7 @@ body.present .tok.implied .d{font-size:24px}
 .fb.no{border-color:var(--bad);background:var(--bad-soft)}
 .fb.tip{border-color:var(--warn-line);background:var(--warn-soft)}
 .fb.tip b{color:var(--warn)}
-.fb b{display:block;margin-bottom:3px;font-size:13px}
+.fb>b{display:block;margin-bottom:3px;font-size:13px}   /* 머리글만 블록 — 본문 속 <b>는 줄을 끊지 않는다 */
 .fb .why{color:var(--ink-2);font-size:12px}
 .rule{display:flex;gap:9px;padding:9px 0;border-top:1px solid var(--line-soft)}
 .rule:first-of-type{border-top:0}
@@ -1185,7 +1178,6 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         </div>
         <div class="qstage">
           <svg id="quizSvg" role="img" aria-label="분자 모형"></svg>
-          <span class="qcond" id="qCond" hidden></span>
           <button class="btn sm ghost stage-chip" id="labelBtn" type="button" aria-pressed="false">모형에 기호 보이기</button>
         </div>
         <div class="ansbox" id="ansBox"><span class="ph">아래 버튼으로 화학식을 만들어 보세요</span></div>
@@ -1987,13 +1979,10 @@ function molPoints(mol, ox, oy, s, pose){
     return {e:a.e, back:!!a.back, x: ox + bx*cs - by*sn, y: oy + bx*sn + by*cs};
   });
 }
-/* 좌표가 정해진 점들로 분자를 그린다. grow: 0~1 이면 결합 막대가 자란다 */
-function drawMoleculeAt(svg, mol, pts, o){
+/* 지우지 않고 한 벌만 덧그린다 — 같은 분자를 여러 개 놓을 때 쓴다 */
+function paintMolecule(svg, mol, pts, o){
   o = o || {};
-  const box = svg.viewBox.baseVal;
-  const w = box.width || 560, h = box.height || 360;
   const s = o.scale || 2.1, grow = o.grow==null?1:o.grow;
-  svg.textContent = "";
   const bonds = el("g",{}); svg.appendChild(bonds);
   mol.bonds.forEach(([i,j])=>{
     const a = pts[i], b = pts[j]; if(!a || !b) return;
@@ -2003,6 +1992,14 @@ function drawMoleculeAt(svg, mol, pts, o){
   });
   pts.map((p,i)=>({p,i})).sort((x,y)=>(x.p.back?0:1)-(y.p.back?0:1))
      .forEach(({p})=> svg.appendChild(atomNode(p.e, p.x, p.y, p.back?s*0.8:s, {label:o.label!==false, dim:!!p.back})));
+}
+/* 좌표가 정해진 점들로 분자를 그린다. grow: 0~1 이면 결합 막대가 자란다 */
+function drawMoleculeAt(svg, mol, pts, o){
+  o = o || {};
+  const box = svg.viewBox.baseVal;
+  const w = box.width || 560, h = box.height || 360;
+  svg.textContent = "";
+  paintMolecule(svg, mol, pts, o);
   if(o.wm!==false) watermark(svg, w, h);
 }
 /* mol을 svg 중앙(또는 지정 위치)에 그린다 */
@@ -2014,6 +2011,55 @@ function drawMolecule(svg, mol, o){
   const cx = o.cx!=null?o.cx:w/2, cy = o.cy!=null?o.cy:h/2;
   const opt = {}; for(const k in o) opt[k] = o[k]; opt.scale = s;
   drawMoleculeAt(svg, mol, molPoints(mol, cx, cy, s, o.pose), opt);
+}
+
+/* 분자 1개가 차지하는 크기 (원자 반지름까지 포함한 분자 좌표계 기준) */
+function molExtent(mol){
+  let x0=1e9, x1=-1e9, y0=1e9, y1=-1e9;
+  mol.atoms.forEach(a=>{
+    const r = (ATOMS[a.e] ? ATOMS[a.e].r : 24);
+    x0=Math.min(x0,a.x-r); x1=Math.max(x1,a.x+r);
+    y0=Math.min(y0,a.y-r); y1=Math.max(y1,a.y+r);
+  });
+  return {w:x1-x0, h:y1-y0, cx:(x0+x1)/2, cy:(y0+y1)/2};
+}
+/* 같은 분자를 n개 나란히 놓는다 — 분자 수를 글씨로 알려 주는 대신
+   학생이 화면에서 직접 세게 한다. 분자마다 옅은 테두리를 둘러
+   '이 덩어리 하나가 분자 1개'라는 경계를 눈으로 잡아 준다 */
+function drawMoleculeCopies(svg, mol, n, o){
+  o = o || {};
+  n = Math.max(1, n|0);
+  const box = svg.viewBox.baseVal;
+  const w = box.width || 560, h = box.height || 360;
+  svg.textContent = "";
+  const cols = n<=3 ? n : 2;
+  const rows = Math.ceil(n/cols);
+  const ext  = molExtent(mol);
+  const gap  = n>1 ? 18 : 0;                 /* 분자끼리의 최소 간격 */
+  const cellW = w/cols, cellH = h/rows;
+  const padX = (n>1 ? 30 : 22), padY = (n>1 ? 30 : 22);
+  let sc = Math.min(o.maxScale || 2.4,
+                    (cellW - padX*2 - gap) / ext.w,
+                    (cellH - padY*2 - gap) / ext.h);
+  sc = Math.max(0.5, sc);
+  const bw = ext.w*sc, bh = ext.h*sc;
+  for(let i=0;i<n;i++){
+    const c = i % cols, r = (i/cols)|0;
+    /* 마지막 줄이 덜 찼으면 가운데로 모은다 */
+    const inRow = Math.min(cols, n - r*cols);
+    const rowOff = (cols - inRow) * cellW / 2;
+    const cx = rowOff + (c + 0.5) * cellW, cy = (r + 0.5) * cellH;
+    if(n>1){
+      const padB = Math.max(12, 14*sc/2.1);
+      svg.appendChild(el("rect",{
+        x:cx-bw/2-padB, y:cy-bh/2-padB, width:bw+padB*2, height:bh+padB*2, rx:16,
+        fill:"none", stroke:"#8FA0BE", "stroke-opacity":"0.26",
+        "stroke-width":"1.5", "stroke-dasharray":"6 6"}));
+    }
+    paintMolecule(svg, mol, molPoints(mol, cx-ext.cx*sc, cy-ext.cy*sc, sc, o.pose),
+                  {scale:sc, label:o.label!==false});
+  }
+  watermark(svg, w, h);
 }
 
 /* 캔버스 크기를 부모에 맞춘다 (DPR 무관 · viewBox 방식) */
@@ -2836,12 +2882,9 @@ function loadQ(){
   $("#qScore").textContent = qScore+" / "+QUIZ.length;
   qFb.className="fb"; qFb.innerHTML="";
   $("#nextBtn").hidden = true; $("#checkBtn").disabled = false;
-  /* 몇 개인지는 알려 주고, 그 수를 어디에 쓸지는 학생이 정한다 */
-  const cond = $("#qCond");
-  cond.hidden = false;
-  cond.innerHTML = byId[q.mol].ko + ' 분자 <b>' + (q.count||1) + '개</b>';
+  /* 개수는 글씨로 알려 주지 않는다 — 화면에 놓인 모형을 세어 학생이 판단한다 */
   $("#g2").innerHTML = (q.count||1) > 1
-    ? "분자가 여러 개예요. <b>분자 1개의 구성은 그대로</b> 두고, 분자 수는 식 앞 계수에 씁니다."
+    ? "화면에 놓인 <b>분자가 몇 개</b>인지 세어 보세요. <b>분자 1개의 구성은 그대로</b> 두고, 센 개수는 식 앞 계수에 씁니다."
     : "모형을 보고 원자의 종류와 개수를 세어 분자식을 만들어 보세요. <b>분자가 1개이면 식 앞에는 아무것도 쓰지 않아요.</b>";
   redrawQuiz(); renderAnswer();
 }
@@ -2849,9 +2892,12 @@ function redrawQuiz(){
   const q = curQ(); if(!q) return;
   fitSvg(quizSvg);
   quizSvg.style.display="";
+  const m = byId[q.mol], n = q.count||1;
   const b = quizSvg.viewBox.baseVal;
-  const sc = Math.min(2.6, Math.max(1.35, Math.min(b.width/230, b.height/165)));
-  drawMolecule(quizSvg, byId[q.mol], {scale:sc, label:showSym});
+  const cap = Math.min(2.6, Math.max(1.35, Math.min(b.width/230, b.height/165)));
+  drawMoleculeCopies(quizSvg, m, n, {maxScale:cap, label:showSym});
+  /* 화면을 보지 못해도 '몇 개가 놓였는지'는 같은 정보량으로 전해야 한다 (§12.5-④) */
+  quizSvg.setAttribute("aria-label", m.ko+" 분자 모형 "+n+"개");
 }
 /* 생략된 1 — 계수를 쓰지 않은 상태를 '빈칸'이 아니라 '1이라서 안 쓴 자리'로 보여 준다.
    1H2O를 만들어 볼 기회는 없애되, 왜 1이 사라졌는지는 계속 눈에 남긴다 */
