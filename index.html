@@ -19,9 +19,12 @@
      탭1 분자 조립대      원자 → 결합 → 분자 모형 (POE 예측 · 도감)
                           사이드에 「분자식 나타내는 방법」 3단계 도해를 함께 둔다
      탭2 분자식 쓰기      모형 읽기 / 분자 수  ← 장면 안 모드 스위치
+                          '화학식을 직접 적는' 문항만 남긴다 (선택형은 탭4로 옮겼다)
                           계수(식 앞)와 아래첨자(기호 오른쪽 아래)를 가른다
+                          1은 쓰지 않는 수 — 계수·아래첨자 '1' 키는 입력되지 않고
+                          그 자리에서 규칙을 알려 준다 (1H₂O를 만들 기회 자체를 없앤다)
      탭3 원소·화합물 분류  생태전환 연계 미션
-     탭4 탐구 질문        서술형 5문항 (힌트 · 모범 답안 · 다시 쓰기)
+     탭4 탐구 질문        객관식 5문항 + 서술형 5문항 (힌트 · 모범 답안 · 다시 쓰기)
      탭5 분자식 표기 순서  Hill 표기법 · IUPAC 원소 배열 순서 (참고 매뉴얼)
 
    L4 고유 서명 = 데이터 동기화 — 조립대 모형 · HUD 원자 수 · 분자식 입력칸 ·
@@ -522,6 +525,7 @@ body.present .tok{font-size:34px}
 .bigf{font-size:var(--fs-num);font-weight:800;letter-spacing:.01em;line-height:1.15;color:var(--ink)}
 .bigf sub{font-size:.55em;color:var(--brand-blue-lit)}
 .bigf .coef{color:var(--warn);margin-right:.06em}
+.bigf .tok.implied{font-size:.36em;padding:.12em .3em;margin-right:.28em;vertical-align:.2em}
 .coef-ink{color:var(--warn)}
 .sub-ink{color:var(--brand-blue-lit)}
 .qexp-cap{margin:0;font-size:var(--fs-label);color:var(--ink-2)}
@@ -548,8 +552,6 @@ body.present .tok{font-size:34px}
 .qhead .sc{font-size:12px;color:var(--ink-3);font-weight:700}
 .qstage{position:relative;border:1px solid var(--line);border-radius:var(--r3);background:radial-gradient(120% 100% at 22% 8%,var(--panel-2),var(--panel) 66%);min-height:0;overflow:hidden;box-shadow:var(--sh2)}
 .qstage svg{position:absolute;inset:0;width:100%;height:100%}
-.qtext{position:absolute;inset:0;display:grid;place-content:center;padding:var(--sp5);text-align:center}
-.qtext p{margin:0 0 var(--sp4);font-size:18px;font-weight:700;line-height:1.55;max-width:34ch}
 .qopts{display:flex;flex-direction:column;gap:7px;width:min(420px,100%)}
 .qopt{min-height:46px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;padding:9px 14px;text-align:left;transition:border-color var(--t-fast)}
 .qopt:hover{border-color:var(--brand-blue-lit)}
@@ -590,10 +592,34 @@ body.present .tok{font-size:34px}
 .key:hover{border-color:var(--brand-blue-lit)}
 .key:active{transform:scale(.94)}
 .key.sub{font-size:18px;color:var(--ink-2)}
+/* '1'은 쓰지 않는 숫자 — 키는 보이되 입력되지 않는다.
+   누르는 순간 그 자리에서 규칙을 알려 주므로 1H₂O가 화면에 만들어질 일이 없다 */
+.key.off{
+  min-width:58px;border-style:dashed;background:transparent;color:var(--ink-3);
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;
+}
+.key.off .d{font-size:15px;font-weight:800;text-decoration:line-through;text-decoration-thickness:2px}
+.key.off.sub .d{font-size:17px}
+.key.off .t{font-size:10px;font-weight:700;letter-spacing:-.02em}
+.key.off:hover{border-color:var(--warn-line);color:var(--warn)}
+.key.off.buzz{animation:keybuzz .3s ease}
+@keyframes keybuzz{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
+@media (prefers-reduced-motion:reduce){.key.off.buzz{animation:none;border-color:var(--warn)}}
+/* 생략된 1 — '계수가 없다'가 아니라 '1이라서 쓰지 않는다'를 눈으로 남긴다 */
+.tok.implied{
+  font-size:15px;font-weight:700;color:var(--ink-3);border:1px dashed var(--line);border-radius:var(--r1);
+  padding:3px 7px;margin-right:7px;display:inline-flex;align-items:baseline;gap:5px;line-height:1.1;
+}
+.tok.implied .d{font-size:17px;font-weight:800;text-decoration:line-through;text-decoration-thickness:2px;opacity:.7}
+.tok.implied .t{font-size:10px;font-weight:700;letter-spacing:-.02em}
+body.present .tok.implied{font-size:20px}
+body.present .tok.implied .d{font-size:24px}
 .fb{border-radius:var(--r2);padding:var(--sp3);font-size:13px;line-height:1.6;display:none;border:1px solid var(--line)}
 .fb.show{display:block}
 .fb.ok{border-color:var(--ok-line);background:var(--ok-soft)}
 .fb.no{border-color:var(--bad);background:var(--bad-soft)}
+.fb.tip{border-color:var(--warn-line);background:var(--warn-soft)}
+.fb.tip b{color:var(--warn)}
 .fb b{display:block;margin-bottom:3px;font-size:13px}
 .fb .why{color:var(--ink-2);font-size:12px}
 .rule{display:flex;gap:9px;padding:9px 0;border-top:1px solid var(--line-soft)}
@@ -637,6 +663,7 @@ body.present .tok{font-size:34px}
 .wri-top .cnt{font-size:13px;font-weight:800}
 .wri-top .note{font-size:12px;color:var(--ink-3)}
 .qlist{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;display:flex;flex-direction:column;gap:var(--sp2);padding-right:4px}
+.qlist[hidden]{display:none}
 .qc{flex:0 0 auto;border:1px solid var(--line);border-radius:var(--r3);background:var(--panel);overflow:hidden}
 .qc>summary{
   list-style:none;cursor:pointer;padding:var(--sp3) var(--sp4);display:flex;gap:var(--sp3);align-items:flex-start;
@@ -669,6 +696,21 @@ body.present .tok{font-size:34px}
 .modelbox .k{font-size:12px;font-weight:800;color:var(--ok);display:block;margin-bottom:4px}
 .modelbox mark{background:transparent;color:var(--ink);font-weight:800}
 .lockrow{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3)}
+
+/* ---- 탐구 질문 탭 · 객관식 문항 카드 (옛 탭2 선택형·O/X 문항을 옮겨 왔다) ---- */
+.mq{flex:0 0 auto;border:1px solid var(--line);border-radius:var(--r3);background:var(--panel);padding:var(--sp4);display:flex;flex-direction:column;gap:var(--sp3)}
+.mq.done{border-color:var(--line-soft)}
+.mq-h{display:flex;gap:var(--sp3);align-items:flex-start}
+.mq-h .no{flex:0 0 22px;width:22px;height:22px;border-radius:var(--r2);background:var(--panel-3);color:var(--ink-2);display:grid;place-items:center;font-size:12px;font-weight:800;margin-top:1px}
+.mq-h .tx{flex:1 1 auto;min-width:0;font-size:13px;font-weight:700;line-height:1.6;margin:0}
+.mq-h .tx .kind{display:block;font-size:12px;color:var(--ink-3);font-weight:700;margin-top:3px}
+.mq .qopts{width:100%;max-width:68ch}
+.mq-h .tx{max-width:76ch}
+.mq .qopts.ox{flex-direction:row}
+.mq .qopts.ox .qopt{flex:1;text-align:center}
+.mq .mrow{display:flex;gap:var(--sp2);flex-wrap:wrap;align-items:center}
+.mq .mrow .sp{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:700}
+.mq .fb{font-size:13px}
 
 /* 모범 답안을 보고 다시 쓰기 — 처음 답안은 잠긴 채 두고, 새 칸에 다시 정리한다 (§9) */
 .revbox{border:1px solid color-mix(in srgb,var(--violet) 42%,transparent);
@@ -1143,15 +1185,14 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         </div>
         <div class="qstage">
           <svg id="quizSvg" role="img" aria-label="분자 모형"></svg>
-          <div class="qtext" id="qText" hidden></div>
           <span class="qcond" id="qCond" hidden></span>
           <button class="btn sm ghost stage-chip" id="labelBtn" type="button" aria-pressed="false">모형에 기호 보이기</button>
         </div>
         <div class="ansbox" id="ansBox"><span class="ph">아래 버튼으로 화학식을 만들어 보세요</span></div>
         <div class="keypad" id="keypad">
-          <div class="keygrp coefgrp"><div class="kl">계수 <span>분자의 개수 · 식 앞</span></div><div class="keys" id="coefKeys"></div></div>
+          <div class="keygrp coefgrp"><div class="kl">계수 <span>분자의 개수 · 식 앞 · 1은 쓰지 않아요</span></div><div class="keys" id="coefKeys"></div></div>
           <div class="keygrp"><div class="kl">원소 기호</div><div class="keys" id="symKeys"></div></div>
-          <div class="keygrp"><div class="kl">아래첨자 <span>원자의 개수 · 기호 오른쪽 아래</span></div><div class="keys" id="numKeys"></div></div>
+          <div class="keygrp"><div class="kl">아래첨자 <span>원자의 개수 · 기호 오른쪽 아래 · 1은 쓰지 않아요</span></div><div class="keys" id="numKeys"></div></div>
         </div>
         <div class="fb" id="qFb" role="status" aria-live="polite"></div>
         <div class="dock flow" id="dock2" role="group" aria-label="퀴즈 조작">
@@ -1169,6 +1210,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         <div class="rule"><div class="n">1</div><div><h4>원자의 종류를 원소 기호로</h4><p>모형의 색으로 원자의 종류를 구별해요.</p></div></div>
         <div class="rule"><div class="n">2</div><div><h4>개수를 오른쪽 아래에 작게</h4><p>원자가 1개이면 숫자 1은 쓰지 않아요.</p></div></div>
         <div class="rule"><div class="n">3</div><div><h4>정해진 순서대로</h4><p>탄소가 있으면 C부터, 없으면 원소 배열 순서를 따릅니다.</p></div></div>
+        <div class="rule"><div class="n">4</div><div><h4>분자가 여러 개면 식 앞에 크게</h4><p>분자 1개일 때도 <b>1은 쓰지 않습니다.</b> H₂O 자체가 이미 ‘물 분자 1개’라는 뜻이에요.</p></div></div>
         <div style="height:12px"></div>
         <button class="btn sm ghost" id="qGoBook" type="button">📘 「분자식 표기 순서」 열기</button>
         <div style="height:16px"></div>
@@ -1207,16 +1249,24 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
 
     <!-- ---------- 탭4 · 탐구 질문 ---------- -->
     <section class="pane wri" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
+      <!-- 장면 안 모드 스위치 — 고르는 문항과 쓰는 문항을 같은 탭에서 오간다 (§3.0.3) -->
       <div class="wri-top">
-        <span class="cnt"><b class="num" id="wCnt">0</b> / <span class="num" id="wTotal">5</span> 작성</span>
-        <span class="note">답안은 자동 저장되며 리포트에 인쇄됩니다.</span>
+        <div class="seg" role="tablist" aria-label="탐구 질문 유형">
+          <button class="sgb on" id="modeMcq" role="tab" aria-selected="true" type="button">객관식 문항</button>
+          <button class="sgb" id="modeWri" role="tab" aria-selected="false" type="button">서술형 답안</button>
+        </div>
+        <span class="cnt" id="mcqCnt"><b class="num" id="mDone">0</b> / <span class="num" id="mTotal">6</span> 풀이 · 정답 <b class="num" id="mScore">0</b></span>
+        <span class="cnt" id="wriCnt" hidden><b class="num" id="wCnt">0</b> / <span class="num" id="wTotal">5</span> 작성</span>
+        <span class="note">기록은 자동 저장되며 리포트에 인쇄됩니다.</span>
       </div>
-      <div class="qlist" id="qlist"></div>
+      <div class="qlist" id="mcqList"></div>
+      <div class="qlist" id="qlist" hidden></div>
       <div class="dock flow" id="dock4" role="group" aria-label="탐구 질문 조작">
         <div class="row">
+          <button class="btn" id="mcqReset" type="button">객관식 다시 풀기</button>
           <button class="btn save" id="w2Report" type="button">학습 리포트 만들기</button>
         </div>
-        <p class="guide">힌트는 답안을 잠그지 않아요. 모범 답안을 열면 처음 답안이 잠기고, 그 아래 ✏️ 다시 쓰기 칸이 열립니다.</p>
+        <p class="guide" id="g4">문항마다 보기를 하나 고른 뒤 <b>정답 확인</b>을 누르세요. 해설은 바로 아래에 열립니다.</p>
       </div>
     </section>
 
@@ -1392,10 +1442,14 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <button class="ib" data-close type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
   </div>
   <div class="m-body">
-    <p><b>분자 조립대</b>에서 원자를 올려 결합하고, <b>분자식 쓰기</b>에서 모형을 분자식으로 옮겨 적습니다.
+    <p><b>분자 조립대</b>에서 원자를 올려 결합하고, <b>분자식 쓰기</b>에서는 모형을 보고 <b>화학식을 직접 적습니다</b>.
     <b>원소·화합물 분류</b>는 지구 환경에 영향을 주는 물질을 원소와 화합물로 나누는 미션이고,
-    <b>탐구 질문</b>에는 내 문장으로 설명을 적습니다. <b>분자식 표기 순서</b>는 원소를 쓰는 차례만 따로 모아 둔
+    <b>탐구 질문</b>에는 <b>객관식 문항</b>과 <b>서술형 답안</b>이 함께 들어 있습니다. <b>분자식 표기 순서</b>는 원소를 쓰는 차례만 따로 모아 둔
     참고 매뉴얼이에요. 다섯 탭은 모두 처음부터 열려 있습니다.</p>
+    <p style="font-size:var(--fs-meta);color:var(--ink-2)"><b>1은 쓰지 않는 수예요.</b>
+    분자가 1개이면 식 앞에 계수를 쓰지 않고, 원자가 1개이면 아래첨자도 쓰지 않습니다.
+    그래서 키패드의 <b>1</b>과 <b>₁</b>은 눌러도 입력되지 않고, 대신 그 자리에서 까닭을 알려 줍니다.
+    입력칸 맨 앞의 흐린 <b>1 · 안 씀</b> 표시는 ‘계수가 없다’가 아니라 ‘1이라서 쓰지 않는다’는 뜻이에요.</p>
     <p style="font-size:var(--fs-meta);color:var(--ink-2)"><b>분자식 쓰기</b> 탭 위쪽의
     <b>모형 읽기 · 분자 수</b> 스위치로 두 장면을 오갈 수 있어요.
     <b>모형 읽기</b>는 모형을 보고 기호와 숫자로 식을 만드는 연습이고,
@@ -1488,7 +1542,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <div class="opts-list">
       <label class="opt-row"><input type="checkbox" id="oWrite" checked><span>탐구 질문 서술형 답안</span></label>
       <label class="opt-row"><input type="checkbox" id="oModel" checked><span>모범 답안 함께 인쇄</span></label>
-      <label class="opt-row"><input type="checkbox" id="oQuiz" checked><span>퀴즈·분류 미션 결과와 오답 해설</span></label>
+      <label class="opt-row"><input type="checkbox" id="oQuiz" checked><span>문항 풀이 결과(화학식 적기·객관식·분류 미션)와 오답 해설</span></label>
     </div>
     <button class="btn save" id="doReport" type="button">학습 리포트 인쇄 · PDF 저장</button>
     <h3>2. 오답 학습지 — 틀린 문제 다시 풀기</h3>
@@ -1550,7 +1604,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
    ------------------------------------------------------------ */
 const KEY  = "ssv-mol-";
 const PREF = KEY + "set";        /* devicePrefs — 항상 localStorage */
-const LEARN_KEYS = ["id","ans","quiz","mis","dex","prac"];
+const LEARN_KEYS = ["id","ans","quiz","mcq","mis","dex","prac"];
 
 let storageWarned = false;
 function rd(area, key, def){
@@ -1779,11 +1833,25 @@ const SUBS = [
 ];
 
 /* ============================================================
-   3. 퀴즈 문항 (선택형 · O/X · 화학식 만들기 혼합)
+   3-1. 탭2 문항 — 화학식을 직접 적는 문항만 (선택형은 3-2로 분리)
+        count 는 이번 문제의 분자 수. 1이면 계수를 쓰지 않는 것이 정답이다.
    ============================================================ */
 const QUIZ = [
-  {id:"q1", type:"formula", mol:"H2O"},
-  {id:"q2", type:"choice",
+  {id:"q1",  type:"formula", mol:"H2O"},
+  {id:"q3",  type:"formula", mol:"CO2"},
+  {id:"q5",  type:"formula", mol:"NH3"},
+  {id:"q7",  type:"formula", mol:"CH4"},
+  /* --- 계수 · 분자 수를 나타내는 자리 --- */
+  {id:"q9",  type:"formula", mol:"H2O", count:3},
+  {id:"q11", type:"formula", mol:"CO2", count:2}
+];
+
+/* ============================================================
+   3-2. 탭4 문항 — 선택형 · O/X (옛 탭2 혼합 문항에서 떼어 냈다)
+        card 는 리포트의 '다시 살펴볼 개념' 연결용
+   ============================================================ */
+const MCQ = [
+  {id:"m1", type:"choice",
    q:"다음 중 <b>원소</b>끼리만 짝지어진 것은?",
    opts:["산소(O<sub>2</sub>), 오존(O<sub>3</sub>), 헬륨(He)",
          "물(H<sub>2</sub>O), 산소(O<sub>2</sub>), 수소(H<sub>2</sub>)",
@@ -1791,31 +1859,37 @@ const QUIZ = [
          "질소(N<sub>2</sub>), 염화 수소(HCl), 오존(O<sub>3</sub>)"],
    a:0,
    why:"원소는 한 종류의 원소로만 이루어진 물질이에요. O₂·O₃·He는 모두 한 종류의 원자로만 되어 있습니다. 물·이산화 탄소·염화 수소처럼 두 종류 이상의 원소가 결합했으면 화합물이에요.",
-   short:"원소는 한 종류의 원자로만 이루어진 물질입니다."},
-  {id:"q3", type:"formula", mol:"CO2"},
-  {id:"q4", type:"ox",
+   short:"원소는 한 종류의 원자로만 이루어진 물질입니다.",
+   card:"원소와 화합물"},
+  {id:"m2", type:"ox",
    q:"산소 분자(O<sub>2</sub>)가 산소 원자 2개로 나누어져도 산소의 성질은 그대로 남는다.",
    a:false,
    why:"분자는 물질의 성질을 나타내는 입자예요. 산소 분자가 원자로 쪼개지면 산소 기체의 성질은 사라집니다.",
-   short:"분자가 원자로 나누어지면 그 물질의 성질은 사라집니다."},
-  {id:"q5", type:"formula", mol:"NH3"},
-  {id:"q6", type:"choice",
+   short:"분자가 원자로 나누어지면 그 물질의 성질은 사라집니다.",
+   card:"분자 — 물질의 성질을 나타내는 입자"},
+  {id:"m3", type:"choice",
    q:"물의 화학식을 쓴 것 중 <b>옳은</b> 것은?",
    opts:["H<sub>2</sub>O<sub>1</sub>","OH<sub>2</sub>","H<sub>2</sub>O","HHO"],
    a:2,
    why:"원자가 1개일 때 아래첨자 1은 생략하고, 같은 원소는 한 번만 쓴 뒤 개수를 아래첨자로 나타냅니다. 원소 배열 순서에서 수소가 산소보다 앞이므로 H₂O예요.",
-   short:"아래첨자 1은 생략하고, 같은 원소는 한 번만 씁니다."},
-  {id:"q7", type:"formula", mol:"CH4"},
-  {id:"q8", type:"choice",
+   short:"아래첨자 1은 생략하고, 같은 원소는 한 번만 씁니다.",
+   card:"화학식 쓰는 2단계"},
+  {id:"m4", type:"choice",
    q:"오존(O<sub>3</sub>)이 산소(O<sub>2</sub>)와 <b>다른 물질</b>인 까닭으로 가장 알맞은 것은?",
    opts:["원자의 종류가 다르기 때문","결합한 원자의 개수가 다르기 때문",
          "오존은 원소이고 산소는 화합물이기 때문","오존에는 원자핵이 없기 때문"],
    a:1,
    why:"둘 다 산소 원자로만 이루어져 있지만 결합한 개수가 2개(O₂)와 3개(O₃)로 다릅니다. 원자의 종류가 같아도 결합한 개수가 달라지면 다른 분자가 되고 성질도 달라져요.",
-   short:"결합한 원자의 개수가 다르면 다른 물질이 됩니다."},
-  /* --- 계수 · 분자 수를 나타내는 자리 --- */
-  {id:"q9", type:"formula", mol:"H2O", count:3},
-  {id:"q10", type:"choice",
+   short:"결합한 원자의 개수가 다르면 다른 물질이 됩니다.",
+   card:"분자 — 물질의 성질을 나타내는 입자"},
+  {id:"m5", type:"choice",
+   q:"물 분자 <b>1개</b>를 화학식으로 바르게 나타낸 것은?",
+   opts:["1H<sub>2</sub>O","H<sub>2</sub>O","H<sub>2</sub>O<sub>1</sub>","1H<sub>2</sub>O<sub>1</sub>"],
+   a:1,
+   why:"1은 쓰지 않는 수예요. 분자가 1개이면 식 앞의 계수를 쓰지 않고, 원자가 1개이면 아래첨자도 쓰지 않습니다. 그래서 H₂O라고만 써도 이미 ‘물 분자 1개’를 뜻합니다. 분자가 2개가 되어야 비로소 앞에 2를 붙여 2H₂O로 씁니다.",
+   short:"계수 1과 아래첨자 1은 모두 쓰지 않습니다.",
+   card:"화학식 쓰는 2단계"},
+  {id:"m6", type:"choice",
    q:"<b>2H<sub>2</sub>O</b>와 <b>H<sub>4</sub>O<sub>2</sub></b>는 어떻게 다른가요?",
    opts:["같은 뜻이다. 쓰는 방법만 다르다",
          "2H<sub>2</sub>O는 물 분자 2개, H<sub>4</sub>O<sub>2</sub>는 분자 1개에 수소 4개·산소 2개라고 적은 식이다",
@@ -1823,8 +1897,8 @@ const QUIZ = [
          "H<sub>4</sub>O<sub>2</sub>가 물을 바르게 쓴 것이다"],
    a:1,
    why:"앞의 큰 숫자(계수)는 분자가 몇 개인지를, 오른쪽 아래 작은 숫자(아래첨자)는 분자 1개 안의 원자 수를 나타냅니다. 전체 원자 수가 수소 4개·산소 2개로 같더라도 두 표현이 가리키는 것은 다릅니다. 물 분자 2개는 2H₂O로만 씁니다.",
-   short:"계수는 분자 수, 아래첨자는 분자 1개 속 원자 수입니다."},
-  {id:"q11", type:"formula", mol:"CO2", count:2}
+   short:"계수는 분자 수, 아래첨자는 분자 1개 속 원자 수입니다.",
+   card:"화학식 쓰는 2단계"}
 ];
 
 /* ============================================================
@@ -2736,11 +2810,11 @@ $("#sheetHandle").addEventListener("click", function(){
 });
 
 /* ============================================================
-   10. 탭2 — 화학식 쓰기 퀴즈
+   10. 탭2 — 화학식 적기 (모형 → 분자식). 선택형 문항은 탭4로 옮겼다
    ============================================================ */
 const quizSvg = $("#quizSvg"), ansBox = $("#ansBox"), qFb = $("#qFb");
 const QSYMS = ["H","C","N","O","S","Cl","He"];
-let qOrder = [], qIdx = 0, qScore = 0, tokens = [], qAnswered = false, showSym = false, qPick = null;
+let qOrder = [], qIdx = 0, qScore = 0, tokens = [], qAnswered = false, showSym = false;
 let coefTok = 0;   /* 0 = 쓰지 않음(1은 생략) */
 let quizLog = store.get("quiz", {done:false, score:0, total:QUIZ.length, wrong:[]});
 
@@ -2755,59 +2829,35 @@ function startQuiz(keepLog){
 function curQ(){ return QUIZ[qOrder[qIdx]]; }
 
 function loadQ(){
-  qAnswered = false; tokens = []; qPick = null; coefTok = 0;
+  qAnswered = false; tokens = []; coefTok = 0;
   const q = curQ();
   $("#qNo").textContent = (qIdx+1)+"번 문제";
   $("#qBar").style.width = (qIdx/QUIZ.length*100)+"%";
   $("#qScore").textContent = qScore+" / "+QUIZ.length;
   qFb.className="fb"; qFb.innerHTML="";
   $("#nextBtn").hidden = true; $("#checkBtn").disabled = false;
-  const isF = q.type==="formula";
+  /* 몇 개인지는 알려 주고, 그 수를 어디에 쓸지는 학생이 정한다 */
   const cond = $("#qCond");
-  if(isF){
-    /* 몇 개인지는 알려 주고, 그 수를 어디에 쓸지는 학생이 정한다 */
-    cond.hidden = false;
-    cond.innerHTML = byId[q.mol].ko + ' 분자 <b>' + (q.count||1) + '개</b>';
-  } else cond.hidden = true;
-  $("#ansBox").style.display = isF?"":"none";
-  $("#keypad").style.display = isF?"":"none";
-  $("#backBtn").style.display = isF?"":"none";
-  $("#eraseBtn").style.display = isF?"":"none";
-  $("#labelBtn").style.display = isF?"":"none";
-  $("#g2").innerHTML = isF
-    ? ((q.count||1) > 1
-        ? "분자가 여러 개예요. <b>분자 1개의 구성은 그대로</b> 두고, 분자 수는 식 앞 계수에 씁니다."
-        : "모형을 보고 원자의 종류와 개수를 세어 분자식을 만들어 보세요. <b>1은 쓰지 않아요.</b>")
-    : "문제를 읽고 알맞은 것을 고른 뒤 정답 확인을 누르세요.";
+  cond.hidden = false;
+  cond.innerHTML = byId[q.mol].ko + ' 분자 <b>' + (q.count||1) + '개</b>';
+  $("#g2").innerHTML = (q.count||1) > 1
+    ? "분자가 여러 개예요. <b>분자 1개의 구성은 그대로</b> 두고, 분자 수는 식 앞 계수에 씁니다."
+    : "모형을 보고 원자의 종류와 개수를 세어 분자식을 만들어 보세요. <b>분자가 1개이면 식 앞에는 아무것도 쓰지 않아요.</b>";
   redrawQuiz(); renderAnswer();
 }
 function redrawQuiz(){
   const q = curQ(); if(!q) return;
   fitSvg(quizSvg);
-  if(q.type==="formula"){
-    $("#qText").hidden = true; quizSvg.style.display="";
-    const b = quizSvg.viewBox.baseVal;
-    const s = Math.min(2.6, Math.max(1.35, Math.min(b.width/230, b.height/165)));
-    drawMolecule(quizSvg, byId[q.mol], {scale:s, label:showSym});
-  } else {
-    quizSvg.textContent = ""; quizSvg.style.display="none";
-    const t = $("#qText"); t.hidden = false;
-    if(q.type==="choice"){
-      t.innerHTML = '<p>'+q.q+'</p><div class="qopts">'+
-        q.opts.map((o,i)=>'<button class="qopt" type="button" data-i="'+i+'" aria-pressed="false">'+
-          '<b style="color:var(--ink-3);margin-right:8px">'+"①②③④".charAt(i)+'</b>'+o+'</button>').join("")+'</div>';
-    } else {
-      t.innerHTML = '<p>'+q.q+'</p><div class="qopts" style="flex-direction:row">'+
-        '<button class="qopt" type="button" data-i="1" aria-pressed="false" style="text-align:center;flex:1">◯ 맞다</button>'+
-        '<button class="qopt" type="button" data-i="0" aria-pressed="false" style="text-align:center;flex:1">✕ 아니다</button></div>';
-    }
-    t.querySelectorAll(".qopt").forEach(b=>b.addEventListener("click", ()=>{
-      if(qAnswered) return;
-      SFX.click(); qPick = +b.dataset.i;
-      t.querySelectorAll(".qopt").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
-    }));
-  }
+  quizSvg.style.display="";
+  const b = quizSvg.viewBox.baseVal;
+  const sc = Math.min(2.6, Math.max(1.35, Math.min(b.width/230, b.height/165)));
+  drawMolecule(quizSvg, byId[q.mol], {scale:sc, label:showSym});
 }
+/* 생략된 1 — 계수를 쓰지 않은 상태를 '빈칸'이 아니라 '1이라서 안 쓴 자리'로 보여 준다.
+   1H2O를 만들어 볼 기회는 없애되, 왜 1이 사라졌는지는 계속 눈에 남긴다 */
+const IMPLIED_ONE = '<span class="tok implied" role="img" title="분자가 1개이므로 계수 1은 쓰지 않습니다"'
+  + ' aria-label="계수 1은 쓰지 않아 비워 둔 자리"><span class="d" aria-hidden="true">1</span>'
+  + '<span class="t" aria-hidden="true">안 씀</span></span>';
 function renderAnswer(){
   if(!tokens.length && !coefTok){
     ansBox.className="ansbox";
@@ -2816,12 +2866,10 @@ function renderAnswer(){
     return;
   }
   ansBox.className="ansbox filled";
-  const head = coefTok
-    ? '<span class="tok coef'+(coefTok===1?" warn":"")+'">'+coefTok+'</span>' : '';
-  ansBox.innerHTML = head + tokens.map(t=>{
-    const bad = (t.n===1 && t.explicit);
-    return '<span class="tok formula'+(bad?" warn":"")+'">'+t.e+((t.explicit||t.n>1)?"<sub>"+t.n+"</sub>":"")+'</span>';
-  }).join("");
+  const head = coefTok ? '<span class="tok coef">'+coefTok+'</span>' : IMPLIED_ONE;
+  ansBox.innerHTML = head + tokens.map(t=>
+    '<span class="tok formula">'+t.e+((t.explicit||t.n>1)?"<sub>"+t.n+"</sub>":"")+'</span>'
+  ).join("");
   sayBench();
 }
 function sayBench(){
@@ -2849,20 +2897,44 @@ function buildKeys(){
     b.type="button"; b.className="key sub"; b.dataset.num=n; b.textContent=SUB[n];
     b.setAttribute("aria-label","아래첨자 "+n); nk.appendChild(b);
   });
-  const one=document.createElement("button");
-  one.type="button"; one.className="key sub"; one.dataset.num="1"; one.textContent="₁";
-  one.setAttribute("aria-label","아래첨자 1"); nk.appendChild(one);
+  nk.appendChild(offKey("sub", "₁", "아래첨자 1은 쓰지 않아요"));
 
+  /* 계수 1 키는 자리만 지키고 입력은 하지 않는다 — 1H2O를 만들 기회 자체를 없앤다 */
   const ck=$("#coefKeys"); ck.textContent="";
-  ["1","2","3","4"].forEach(n=>{
+  ck.appendChild(offKey("coef", "1", "계수 1은 쓰지 않아요"));
+  ["2","3","4"].forEach(n=>{
     const b=document.createElement("button");
     b.type="button"; b.className="key coef"; b.dataset.coef=n; b.textContent=n;
     b.setAttribute("aria-label","계수 "+n+" (분자 "+n+"개)"); ck.appendChild(b);
   });
 }
+/* 눌러도 입력되지 않는 '1' 키 — 규칙을 손끝에서 가르치는 자리다 */
+function offKey(kind, glyph, label){
+  const b=document.createElement("button");
+  b.type="button"; b.className="key off "+kind; b.dataset.off=kind;
+  b.innerHTML='<span class="d">'+glyph+'</span><span class="t">안 씀</span>';
+  b.setAttribute("aria-label", label); b.title = label;
+  return b;
+}
+/* 1을 눌렀을 때 — 입력을 막고, 그 자리에서 규칙과 까닭을 함께 보여 준다 */
+function refuseOne(btn, kind){
+  SFX.bad();
+  btn.classList.remove("buzz"); void btn.offsetWidth; btn.classList.add("buzz");
+  setTimeout(()=>btn.classList.remove("buzz"), 360);
+  const coef = kind==="coef";
+  qFb.className = "fb tip show";
+  qFb.innerHTML = '<b>'+(coef ? "계수 1은 쓰지 않아요. 그래서 입력되지 않았어요."
+                              : "아래첨자 1은 쓰지 않아요. 그래서 입력되지 않았어요.")+'</b>'
+    + '<span class="why">'+(coef
+        ? "분자가 1개일 때는 식 앞에 아무것도 쓰지 않습니다. <b>H₂O</b>라고만 써도 이미 ‘물 분자 <b>1개</b>’라는 뜻이에요. 분자가 2개가 되어야 앞에 2를 붙여 <b>2H₂O</b>로 씁니다."
+        : "원자가 1개일 때는 기호 오른쪽 아래에 아무것도 쓰지 않습니다. 물은 <b>H₂O₁</b>이 아니라 <b>H₂O</b>예요.")
+    + '</span>';
+  say((coef?"계수":"아래첨자")+" 1은 쓰지 않습니다. 입력되지 않았어요.");
+}
 buildKeys();
 $("#coefKeys").addEventListener("click", ev=>{
   const b=ev.target.closest(".key"); if(!b||qAnswered) return;
+  if(b.dataset.off){ refuseOne(b, "coef"); return; }
   SFX.click();
   const v = +b.dataset.coef;
   coefTok = (coefTok === v) ? 0 : v;    /* 같은 키를 다시 누르면 지운다 */
@@ -2873,7 +2945,9 @@ $("#symKeys").addEventListener("click", ev=>{
   SFX.click(); tokens.push({e:b.dataset.sym,n:1,explicit:false}); renderAnswer();
 });
 $("#numKeys").addEventListener("click", ev=>{
-  const b=ev.target.closest(".key"); if(!b||qAnswered||!tokens.length) return;
+  const b=ev.target.closest(".key"); if(!b||qAnswered) return;
+  if(b.dataset.off){ refuseOne(b, "sub"); return; }
+  if(!tokens.length) return;
   SFX.click();
   const t=tokens[tokens.length-1]; t.n=+b.dataset.num; t.explicit=true; renderAnswer();
 });
@@ -2895,16 +2969,10 @@ $("#labelBtn").addEventListener("click", function(){
 $("#qGoBook").addEventListener("click", ()=>{ SFX.click(); showTab("t5"); });
 
 $("#checkBtn").addEventListener("click", ()=>{
-  const q = curQ();
   if(qAnswered) return;
-  if(q.type==="formula" && !tokens.length){
+  if(!tokens.length){
     qFb.className="fb no show";
     qFb.innerHTML='<b>화학식이 비어 있어요.</b><span class="why">원소 기호 버튼을 눌러 화학식을 만들어 보세요.</span>';
-    return;
-  }
-  if(q.type!=="formula" && qPick===null){
-    qFb.className="fb no show";
-    qFb.innerHTML='<b>아직 고르지 않았어요.</b><span class="why">보기 중 하나를 먼저 골라 주세요.</span>';
     return;
   }
   grade();
@@ -2916,15 +2984,13 @@ function grade(){
   $("#nextBtn").textContent = (qIdx===QUIZ.length-1) ? "결과 보기" : "다음 문제";
   let right=false, msg="", why="";
 
-  if(q.type==="formula"){
+  {
     const m = byId[q.mol], want = m.parts, got = tokens;
     const wantN = q.count || 1;                    /* 이번 문제의 분자 수 */
-    const gotN  = coefTok || 1;                    /* 쓰지 않았으면 1 */
+    const gotN  = coefTok || 1;                    /* 계수를 쓰지 않았으면 1개 */
     const full  = (wantN>1 ? wantN : "") + fText(want);   /* 기대 정답 표기 */
     const wm={}; want.forEach(([e,n])=>wm[e]=n);
     const gm={}; got.forEach(t=>gm[t.e]=(gm[t.e]||0)+t.n);
-    const one = got.some(t=>t.n===1&&t.explicit);
-    const coefOne = coefTok === 1;                 /* 계수 1은 생략한다 */
     const sameSet = Object.keys(wm).length===Object.keys(gm).length && Object.keys(wm).every(e=>gm[e]!==undefined);
     const sameNum = sameSet && Object.keys(wm).every(e=>gm[e]===wm[e]);
     const seen={}; let rep=false; got.forEach(t=>{ if(seen[t.e]) rep=true; seen[t.e]=1; });
@@ -2932,28 +2998,24 @@ function grade(){
     /* 전체 원자 수를 아래첨자에 곱해 써 버린 경우 — 가장 흔한 오개념 */
     const multiplied = wantN>1 && gotN===1 && sameSet
                        && Object.keys(wm).every(e=>gm[e]===wm[e]*wantN);
-    right = sameOrder && !one && !coefOne && gotN===wantN;
+    /* 계수 1·아래첨자 1은 키패드에서 아예 입력되지 않으므로 여기서 걸러질 일이 없다 */
+    right = sameOrder && gotN===wantN;
 
     if(right){
       msg = "정확해요. "+m.ko+" 분자 "+wantN+"개 — "+full;
       why = wantN>1
         ? "분자식 "+fText(want)+"는 그대로이고, 앞의 "+wantN+"은 분자 수예요. 전체 원자 수는 "
           + want.map(([e,n])=>ATOMS[e].ko+" "+(n*wantN)+"개").join(", ")+"입니다."
-        : (ORDER_WHY[m.id]||"");
+        : (ORDER_WHY[m.id]||"") + " 분자가 1개이므로 식 앞에는 아무것도 쓰지 않습니다.";
     } else if(multiplied){
       msg="분자 수와 원자 수를 구분해 보세요.";
       why="전체 원자 수를 아래첨자에 합쳐 쓰면 다른 뜻이 됩니다. 분자 1개의 구성 "+fText(want)
           +"는 그대로 두고, 분자 수 "+wantN+"은 식 <b>앞</b>에 씁니다. 정답은 "+full+"예요.";
-    } else if(coefOne){
-      msg="맨 앞의 1은 생략해요.";
-      why="분자가 1개일 때는 계수를 쓰지 않습니다. 계수 칸의 같은 숫자를 한 번 더 누르면 지워져요. 정답은 "+full+"예요.";
     } else if(gotN !== wantN){
-      msg = gotN>1 || wantN===1 ? "앞의 계수를 확인해 보세요." : "분자 수를 아직 쓰지 않았어요.";
+      msg = wantN===1 ? "이번에는 계수를 쓰지 않아요." : (gotN>1 ? "앞의 계수를 확인해 보세요." : "분자 수를 아직 쓰지 않았어요.");
       why = wantN===1
-        ? "이번에는 분자 1개예요. 분자 1개이므로 앞의 숫자는 쓰지 않습니다. 정답은 "+full+"예요."
+        ? "이번 문제는 분자 1개예요. 분자가 1개이면 식 앞에 아무것도 쓰지 않습니다. 계수 칸의 같은 숫자를 한 번 더 누르면 지워져요. 정답은 "+full+"예요."
         : "이번에는 "+m.ko+" 분자 "+wantN+"개예요. 분자 수는 식 앞의 큰 숫자로 나타냅니다. 정답은 "+full+"예요.";
-    } else if(one){
-      msg="아래첨자 1은 생략해요."; why="원자가 1개일 때는 아래첨자를 쓰지 않습니다. 정답은 "+full+"예요.";
     } else if(!sameSet){
       msg="원자의 종류를 다시 살펴보세요.";
       why="이 문제의 원자는 "+want.map(([e])=>ATOMS[e].ko).join(", ")+"예요. 모형의 색으로 어떤 원자가 들어 있는지 세어 보세요. 정답은 "+full+"예요.";
@@ -2968,21 +3030,6 @@ function grade(){
     }
     if(!right) logWrong(q,
       (coefTok?coefTok:"")+tokens.map(t=>t.e+(t.explicit||t.n>1?t.n:"")).join(""), full, why);
-  } else {
-    const ansIdx = q.type==="ox" ? (q.a?1:0) : q.a;
-    right = qPick===ansIdx;
-    msg = right ? "정답이에요." : "다시 살펴볼까요?";
-    why = q.why;
-    const btns = $("#qText").querySelectorAll(".qopt");
-    btns.forEach(b=>{
-      const i=+b.dataset.i;
-      if(i===ansIdx) b.classList.add("right");
-      else if(i===qPick) b.classList.add("wrong");
-    });
-    if(!right){
-      const lbl = i => q.type==="ox" ? (i===1?"맞다":"아니다") : q.opts[i].replace(/<[^>]+>/g,"");
-      logWrong(q, lbl(qPick), lbl(ansIdx), q.why);
-    }
   }
   if(right){ qScore++; SFX.ok(); } else SFX.bad();
   qFb.className = "fb "+(right?"ok":"no")+" show";
@@ -2991,17 +3038,17 @@ function grade(){
   $("#qBar").style.width = ((qIdx+1)/QUIZ.length*100)+"%";
 }
 const CARD_FOR = {
-  q1:"화학식 쓰는 2단계", q3:"분자식 표기 순서 ① Hill 표기법", q5:"분자식 표기 순서 ② 원소 배열 순서",
-  q7:"분자식 표기 순서 ① Hill 표기법", q2:"원소와 화합물", q4:"분자 — 물질의 성질을 나타내는 입자",
-  q6:"화학식 쓰는 2단계", q8:"분자 — 물질의 성질을 나타내는 입자"
+  q1:"화학식 쓰는 2단계", q3:"분자식 표기 순서 ① Hill 표기법",
+  q5:"분자식 표기 순서 ② 원소 배열 순서", q7:"분자식 표기 순서 ① Hill 표기법",
+  q9:"화학식 쓰는 2단계", q11:"화학식 쓰는 2단계"
 };
 function logWrong(q, mine, right, why){
   quizLog.wrong = quizLog.wrong.filter(w=>w.id!==q.id);
   quizLog.wrong.push({
     id:q.id,
-    q: q.type==="formula" ? (byId[q.mol].ko+" 분자 "+(q.count||1)+"개를 분자식으로 쓰시오.") : q.q.replace(/<[^>]+>/g,""),
+    q: byId[q.mol].ko+" 분자 "+(q.count||1)+"개를 분자식으로 쓰시오.",
     mine: mine||"(쓰지 않음)", right: right, why: why,
-    concept: q.type==="formula" ? "화학식 쓰는 순서" : (q.short||""),
+    concept: "화학식 쓰는 순서",
     card: CARD_FOR[q.id] || "화학식 쓰는 2단계"
   });
   store.set("quiz", quizLog);
@@ -3059,7 +3106,7 @@ function expItem(){ return EXP_LIST.find(x=>x.id===expId) || EXP_LIST[0]; }
 
 /* 계수는 앞·크게, 아래첨자는 뒤·작게 — 표기 규칙을 시각 위계로 보여 준다 */
 function expFormulaHTML(parts, n){
-  return (n>1 ? '<span class="coef">'+n+'</span>' : '')
+  return (n>1 ? '<span class="coef">'+n+'</span>' : IMPLIED_ONE)
        + parts.map(([e,c])=> e + (c>1 ? '<sub>'+c+'</sub>' : '')).join("");
 }
 function buildExpSelect(){
@@ -3080,7 +3127,8 @@ function renderExp(){
   $("#expFormula").innerHTML = expFormulaHTML(x.parts, expN);
 
   $("#expCap").innerHTML = x.ko + " 분자 " + expN + "개 · 분자식 <b>" + fText(x.parts) + "</b>는 그대로예요."
-    + (expN>1 ? " 앞의 <b class=\"coef-ink\">" + expN + "</b>은 분자 수입니다." : "");
+    + (expN>1 ? " 앞의 <b class=\"coef-ink\">" + expN + "</b>은 분자 수입니다."
+              : " 분자가 <b>1개</b>일 때는 계수 1을 <b>쓰지 않습니다.</b>");
 
   $("#expGroups").innerHTML = Array.from({length:expN}, (_,i)=>
     '<div class="mgroup"><div class="meta">분자 ' + (i+1) + ' · 원자 구성</div>'
@@ -3116,8 +3164,8 @@ function setQuizMode(m){
   $("#qScore").style.display= exp ? "none" : "";
   $("#qBar").parentElement.style.display = exp ? "none" : "";
   $(".qstage").style.display = exp ? "none" : "";
-  $("#ansBox").style.display = exp ? "none" : (curQ() && curQ().type==="formula" ? "" : "none");
-  $("#keypad").style.display = exp ? "none" : (curQ() && curQ().type==="formula" ? "" : "none");
+  $("#ansBox").style.display = exp ? "none" : "";
+  $("#keypad").style.display = exp ? "none" : "";
   $("#qFb").style.display    = exp ? "none" : "";
   $("#dock2").style.display  = exp ? "none" : "";
   if(exp){ renderExp(); }
@@ -3268,7 +3316,153 @@ function endMis(cleared){
 const MIS_HTML = $("#misBody").innerHTML;
 
 /* ============================================================
-   12. 탭4 — 서술형 탐구 질문 (§9)
+   12. 탭4 — 객관식 문항 (옛 탭2의 선택형·O/X를 이 탭으로 옮겼다)
+   순서대로 넘기는 퀴즈가 아니라 한 화면에 펼친 카드다. 문항마다
+   그 자리에서 채점하고 해설을 열어, 쓰기 연습(탭2)과 성격을 나눈다.
+   ============================================================ */
+let mcqLog = store.get("mcq", {done:false, score:0, total:MCQ.length, picks:{}, wrong:[]});
+if(!mcqLog.picks) mcqLog.picks = {};
+if(!mcqLog.wrong) mcqLog.wrong = [];
+function saveMcq(){ store.set("mcq", mcqLog); }
+function mcqAnsIdx(q){ return q.type==="ox" ? (q.a?1:0) : q.a; }
+function mcqDoneCount(){ return MCQ.filter(q=>mcqLog.picks[q.id]!==undefined).length; }
+function mcqScore(){ return MCQ.filter(q=>mcqLog.picks[q.id]===mcqAnsIdx(q)).length; }
+
+function buildMcq(){
+  const list = $("#mcqList"); list.textContent="";
+  MCQ.forEach((q,i)=>{
+    const d = document.createElement("div");
+    d.className = "mq"; d.dataset.id = q.id;
+    const opts = q.type==="ox"
+      ? '<div class="qopts ox" role="group" aria-label="답 고르기">'
+        + '<button class="qopt" type="button" data-i="1" aria-pressed="false">◯ 맞다</button>'
+        + '<button class="qopt" type="button" data-i="0" aria-pressed="false">✕ 아니다</button></div>'
+      : '<div class="qopts" role="group" aria-label="답 고르기">'
+        + q.opts.map((t,j)=>'<button class="qopt" type="button" data-i="'+j+'" aria-pressed="false">'
+            + '<b style="color:var(--ink-3);margin-right:8px">'+"①②③④".charAt(j)+'</b>'+t+'</button>').join("")
+        + '</div>';
+    d.innerHTML =
+      '<div class="mq-h"><span class="no num">'+(i+1)+'</span>'
+      + '<p class="tx">'+q.q+'<span class="kind">'+(q.type==="ox"?"◯ / ✕ 문항":"선택형 문항")+'</span></p></div>'
+      + opts
+      + '<div class="mrow"><button class="btn sm primary" type="button" data-check>정답 확인</button>'
+      + '<button class="btn sm ghost" type="button" data-book hidden>📘 「분자식 표기 순서」 열기</button>'
+      + '<span class="sp" data-state></span></div>'
+      + '<div class="fb" data-fb role="status" aria-live="polite"></div>';
+    list.appendChild(d);
+
+    d.querySelectorAll(".qopt").forEach(b=>b.addEventListener("click", ()=>{
+      if(mcqLog.picks[q.id]!==undefined) return;
+      SFX.click();
+      d.querySelectorAll(".qopt").forEach(x=>x.setAttribute("aria-pressed", x===b?"true":"false"));
+    }));
+    d.querySelector("[data-check]").addEventListener("click", ()=>gradeMcq(d,q));
+    d.querySelector("[data-book]").addEventListener("click", ()=>{ SFX.click(); showTab("t5"); });
+    paintMcq(d,q);
+  });
+  updateMcqCount();
+}
+
+function gradeMcq(d, q){
+  if(mcqLog.picks[q.id]!==undefined) return;
+  const sel = d.querySelector('.qopt[aria-pressed="true"]');
+  if(!sel){
+    const fb = d.querySelector("[data-fb]");
+    fb.className="fb no show";
+    fb.innerHTML='<b>아직 고르지 않았어요.</b><span class="why">보기 중 하나를 먼저 골라 주세요.</span>';
+    return;
+  }
+  const pick = +sel.dataset.i;
+  mcqLog.picks[q.id] = pick;
+  const right = pick === mcqAnsIdx(q);
+  if(right) SFX.ok(); else { SFX.bad(); logMcqWrong(q, pick); }
+  saveMcq(); paintMcq(d,q); updateMcqCount();
+  say((MCQ.indexOf(q)+1)+"번 문항 "+(right?"정답":"오답")+". "+stripTag(q.why));
+}
+
+function paintMcq(d, q){
+  const pick = mcqLog.picks[q.id];
+  const done = pick !== undefined;
+  const ai = mcqAnsIdx(q);
+  d.classList.toggle("done", done);
+  d.querySelectorAll(".qopt").forEach(b=>{
+    const i = +b.dataset.i;
+    b.classList.remove("right","wrong");
+    b.disabled = done;
+    if(done){
+      b.setAttribute("aria-pressed", i===pick ? "true" : "false");
+      if(i===ai) b.classList.add("right");
+      else if(i===pick) b.classList.add("wrong");
+    }
+  });
+  d.querySelector("[data-check]").disabled = done;
+  const st = d.querySelector("[data-state]");
+  const fb = d.querySelector("[data-fb]");
+  const bk = d.querySelector("[data-book]");
+  if(done){
+    const right = pick===ai;
+    st.textContent = right ? "정답" : "다시 살펴보기";
+    st.style.color = right ? "var(--ok)" : "var(--bad)";
+    fb.className = "fb "+(right?"ok":"no")+" show";
+    fb.innerHTML = '<b>'+(right?"정답이에요.":"다시 살펴볼까요?")+'</b><span class="why">'+q.why+'</span>';
+    bk.hidden = right;
+  } else {
+    st.textContent = "아직 풀지 않았어요"; st.style.color = "";
+    fb.className = "fb"; fb.innerHTML = "";
+    bk.hidden = true;
+  }
+}
+
+function logMcqWrong(q, pick){
+  const lbl = i => q.type==="ox" ? (i===1?"◯ 맞다":"✕ 아니다") : stripTag(q.opts[i]);
+  mcqLog.wrong = mcqLog.wrong.filter(w=>w.id!==q.id);
+  mcqLog.wrong.push({
+    id:q.id, q: stripTag(q.q), mine: lbl(pick), right: lbl(mcqAnsIdx(q)),
+    why: stripTag(q.why), concept: q.short||"", card: q.card||"화학식 쓰는 2단계"
+  });
+}
+
+function updateMcqCount(){
+  const n = mcqDoneCount(), sc = mcqScore();
+  $("#mDone").textContent = n;
+  $("#mTotal").textContent = MCQ.length;
+  $("#mScore").textContent = sc;
+  mcqLog.done = n >= MCQ.length; mcqLog.score = sc; mcqLog.total = MCQ.length;
+  saveMcq(); markSteps();
+}
+
+$("#mcqReset").addEventListener("click", async ()=>{
+  if(!mcqDoneCount()){ toast("아직 푼 문항이 없어요"); return; }
+  const ok = await ask("객관식 문항을 다시 풀까요?",
+    "지금까지 고른 답과 해설이 지워지고 처음부터 다시 풀 수 있어요. <b>서술형 답안과 오답 노트의 다른 기록은 그대로</b> 남습니다.",
+    "다시 풀기", "그대로 둘게요");
+  if(!ok) return;
+  mcqLog.picks = {}; mcqLog.wrong = []; mcqLog.done = false; mcqLog.score = 0;
+  saveMcq(); buildMcq(); SFX.click();
+  $("#mcqList").scrollTop = 0;
+});
+
+/* 장면 안 모드 스위치 — 고르는 문항과 쓰는 문항을 한 탭에서 오간다 */
+let wriMode = "mcq";
+function setWriMode(m){
+  wriMode = m;
+  const mc = m === "mcq";
+  $("#modeMcq").classList.toggle("on", mc);
+  $("#modeWri").classList.toggle("on", !mc);
+  $("#modeMcq").setAttribute("aria-selected", String(mc));
+  $("#modeWri").setAttribute("aria-selected", String(!mc));
+  $("#mcqList").hidden = !mc;  $("#qlist").hidden = mc;
+  $("#mcqCnt").hidden  = !mc;  $("#wriCnt").hidden = mc;
+  $("#mcqReset").hidden = !mc;
+  $("#g4").innerHTML = mc
+    ? "문항마다 보기를 하나 고른 뒤 <b>정답 확인</b>을 누르세요. 해설은 바로 아래에 열립니다."
+    : "힌트는 답안을 잠그지 않아요. 모범 답안을 열면 처음 답안이 잠기고, 그 아래 ✏️ 다시 쓰기 칸이 열립니다.";
+}
+$("#modeMcq").addEventListener("click", ()=>{ SFX.click(); setWriMode("mcq"); });
+$("#modeWri").addEventListener("click", ()=>{ SFX.click(); setWriMode("wri"); });
+
+/* ============================================================
+   12.5 탭4 — 서술형 탐구 질문 (§9)
    ============================================================ */
 let ans = store.get("ans", {});   /* {w1:{t:"", locked:false, hinted:false}} */
 function ansOf(id){ if(!ans[id]) ans[id]={t:"",rev:"",locked:false,hinted:false}; if(ans[id].rev===undefined) ans[id].rev=""; return ans[id]; }
@@ -3378,7 +3572,7 @@ function markSteps(){
   $("#t1").classList.toggle("done", collected.size >= 3);
   $("#t2").classList.toggle("done", !!quizLog.done);
   $("#t3").classList.toggle("done", !!misLog.done);
-  $("#t4").classList.toggle("done", writtenCount() >= WQ.length);
+  $("#t4").classList.toggle("done", mcqDoneCount() >= MCQ.length && writtenCount() >= WQ.length);
 }
 
 /* ============================================================
@@ -3793,7 +3987,7 @@ function prFoot(){
   return '<div class="pr-foot">'+esc(FOOT)+'</div><div class="pr-wm">© 송쌤과학 가상실험실 · 분자 모형과 화학식</div>';
 }
 function allWrong(){
-  return (quizLog.wrong||[]).concat(misLog.wrong||[]);
+  return (quizLog.wrong||[]).concat(mcqLog.wrong||[], misLog.wrong||[]);
 }
 function reviewCards(){
   const set = new Set();
@@ -3828,8 +4022,9 @@ function buildReport(){
   }
 
   if(wantQ){
-    h += '<div class="pr-sec"><h2>퀴즈 · 분류 미션 결과</h2><table class="pr-t"><tbody>'+
-      '<tr><th>화학식 쓰기 퀴즈</th><td>'+(quizLog.done? quizLog.score+" / "+quizLog.total+"문제 정답 ("+Math.round(quizLog.score/quizLog.total*100)+"점)" : "아직 끝내지 않았어요")+'</td></tr>'+
+    h += '<div class="pr-sec"><h2>문항 풀이 결과</h2><table class="pr-t"><tbody>'+
+      '<tr><th>분자식 쓰기 (화학식 적기)</th><td>'+(quizLog.done? quizLog.score+" / "+quizLog.total+"문제 정답 ("+Math.round(quizLog.score/quizLog.total*100)+"점)" : "아직 끝내지 않았어요")+'</td></tr>'+
+      '<tr><th>탐구 질문 객관식</th><td>'+(mcqDoneCount()? mcqScore()+" / "+MCQ.length+"문제 정답"+(mcqLog.done?"":" (푸는 중 — "+mcqDoneCount()+"문항 풀이)") : "아직 풀지 않았어요")+'</td></tr>'+
       '<tr><th>원소·화합물 분류</th><td>'+(misLog.done? misLog.score+" / "+misLog.total+"개 정답" : "아직 끝내지 않았어요")+'</td></tr>'+
       '<tr><th>만든 분자</th><td>'+collected.size+' / '+MOLECULES.length+'종 — '+
         (collected.size? MOLECULES.filter(m=>collected.has(m.id)).map(m=>m.ko+"("+fText(m.parts)+")").join(", ") : "아직 없어요")+'</td></tr>'+
@@ -3880,16 +4075,18 @@ function buildBlank(withAnswer){
          '<p class="tags" style="margin-top:2mm">모범 답안을 보고 다시 쓴 답안</p>'+
          '<div class="pr-lines"><i></i><i></i><i></i></div></div>';
   });
-  h += '</div><div class="pr-sec"><h2>대표 퀴즈 문항</h2>';
+  h += '</div><div class="pr-sec"><h2>분자식 쓰기 — 화학식 적기</h2>';
   QUIZ.forEach((q,i)=>{
-    if(q.type==="formula"){
-      const m = byId[q.mol];
-      h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+m.ko+' 분자는 '+
-        m.parts.map(([e,n])=>ATOMS[e].ko+"("+e+") 원자 "+n+"개").join(", ")+
-        '(으)로 이루어져 있습니다. 화학식을 쓰시오.</p><div class="pr-lines"><i></i></div></div>';
-    } else if(q.type==="choice"){
+    const m = byId[q.mol], n = q.count||1;
+    h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+m.ko+' 분자 '+n+'개가 있습니다. 분자 1개는 '+
+      m.parts.map(([e,c])=>ATOMS[e].ko+"("+e+") 원자 "+c+"개").join(", ")+
+      '(으)로 이루어져 있습니다. 화학식을 쓰시오.</p><div class="pr-lines"><i></i></div></div>';
+  });
+  h += '</div><div class="pr-sec"><h2>탐구 질문 — 객관식 문항</h2>';
+  MCQ.forEach((q,i)=>{
+    if(q.type==="choice"){
       h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+stripTag(q.q)+'</p>'+
-        q.opts.map((o,j)=>'<p style="margin:1mm 0;font-size:10.5pt">'+"①②③④".charAt(j)+" "+stripTag(o)+'</p>').join("")+
+        q.opts.map((t,j)=>'<p style="margin:1mm 0;font-size:10.5pt">'+"①②③④".charAt(j)+" "+stripTag(t)+'</p>').join("")+
         '<div class="pr-lines"><i></i></div></div>';
     } else {
       h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+stripTag(q.q)+' ( ◯ / ✕ )</p>'+
@@ -3904,11 +4101,17 @@ function buildBlank(withAnswer){
       h += '<tr><td>서술 '+(i+1)+'</td><td>'+stripTag(q.model)+'</td><td>'+q.keys.map(k=>"‘"+k+"’").join(", ")+' 가 답안에 들어갔는지 확인</td></tr>';
     });
     QUIZ.forEach((q,i)=>{
-      const a = q.type==="formula" ? fText(byId[q.mol].parts)
-              : q.type==="ox" ? (q.a?"◯ 맞다":"✕ 아니다")
+      const n = q.count||1;
+      const a = (n>1 ? n : "") + fText(byId[q.mol].parts);
+      const why = (ORDER_WHY[q.mol]||"")
+        + (n>1 ? " 분자 "+n+"개이므로 식 앞에 계수 "+n+"을 쓴다."
+               : " 분자가 1개이므로 계수 1은 쓰지 않는다.");
+      h += '<tr><td>화학식 '+(i+1)+'</td><td><b>'+esc(a)+'</b></td><td>'+esc(why)+'</td></tr>';
+    });
+    MCQ.forEach((q,i)=>{
+      const a = q.type==="ox" ? (q.a?"◯ 맞다":"✕ 아니다")
               : "①②③④".charAt(q.a)+" "+stripTag(q.opts[q.a]);
-      const why = q.type==="formula" ? (ORDER_WHY[q.mol]||"") : q.why;
-      h += '<tr><td>퀴즈 '+(i+1)+'</td><td><b>'+esc(a)+'</b></td><td>'+esc(why)+'</td></tr>';
+      h += '<tr><td>객관식 '+(i+1)+'</td><td><b>'+esc(a)+'</b></td><td>'+esc(stripTag(q.why))+'</td></tr>';
     });
     h += '</tbody></table></div>';
   }
@@ -4142,12 +4345,12 @@ $("#resumeNo").addEventListener("click", ()=>{
 
   buildChips(); buildPalette(); renderDex(); setupPoe(); buildTerms(); buildRef(); buildExpSelect();
   refreshHowFig();
-  startQuiz(true); startMis(true); buildWrite(); markSteps();
+  startQuiz(true); startMis(true); buildMcq(); buildWrite(); setWriMode("mcq"); markSteps();
   showTab("t1");
   setTimeout(fitAll, 80);
 
   /* 이번 세션에 이미 쓴 기록이 있으면 조용히 잇는다 (같은 탭 새로고침) */
-  const inSession = (Object.keys(ans).length>0) || collected.size>0 || quizLog.done || misLog.done;
+  const inSession = (Object.keys(ans).length>0) || collected.size>0 || quizLog.done || misLog.done || mcqDoneCount()>0;
   if(inSession){ setTimeout(()=>toast("이 화면의 기록을 이어서 봅니다"), 700); }
   else if(listPersisted().length){
     /* 공용 기기일 수 있으므로 조용히 복원하지 않는다 — 비차단 선택지 (§11) */
