@@ -25,7 +25,9 @@
                           그 자리에서 규칙을 알려 준다 (1H₂O를 만들 기회 자체를 없앤다)
      탭3 원소·화합물 분류  생태전환 연계 미션
      탭4 탐구 질문        객관식 5문항 + 서술형 5문항 (힌트 · 모범 답안 · 다시 쓰기)
-     탭5 분자식 표기 순서  Hill 표기법 · IUPAC 원소 배열 순서 (참고 매뉴얼)
+     탭5 분자식 표기 순서  Hill 표기법 · IUPAC 원소 배열 순서
+                          중학교 교육과정 밖의 심화 참고 자료. 실험 화면은 순서를 늘
+                          알려 주고, 학생이 할 일은 분자 1개 속 원자 수를 세는 것이다
 
    L4 고유 서명 = 데이터 동기화 — 조립대 모형 · HUD 원자 수 · 분자식 입력칸 ·
    분자 수 탐구의 전체 원자 수가 하나의 조성을 공유하고 함께 갱신된다.
@@ -525,7 +527,7 @@ body.present .tok{font-size:34px}
 .bigf{font-size:var(--fs-num);font-weight:800;letter-spacing:.01em;line-height:1.15;color:var(--ink)}
 .bigf sub{font-size:.55em;color:var(--brand-blue-lit)}
 .bigf .coef{color:var(--warn);margin-right:.06em}
-.bigf .tok.implied{font-size:.36em;padding:.12em .3em;margin-right:.28em;vertical-align:.2em}
+.bigf .tok.implied{font-size:.36em;padding:.12em .3em;margin-right:.28em}
 .coef-ink{color:var(--warn)}
 .sub-ink{color:var(--brand-blue-lit)}
 .qexp-cap{margin:0;font-size:var(--fs-label);color:var(--ink-2)}
@@ -561,8 +563,11 @@ body.present .tok{font-size:34px}
 .qopt sub{font-size:.62em}
 .ansbox{
   border:1px dashed var(--line);border-radius:var(--r2);min-height:56px;display:flex;align-items:center;
-  justify-content:center;gap:2px;padding:var(--sp2) var(--sp3);background:var(--panel-2);
+  justify-content:center;padding:var(--sp2) var(--sp3);background:var(--panel-2);
 }
+/* 토큰은 인라인으로 둔다 — 글자 밑선(baseline)이 하나로 맞는다 */
+.ansrow{display:block;text-align:center}
+.ansrow .tok+.tok{margin-left:2px}
 .ansbox.filled{border-style:solid;border-color:var(--brand-blue-lit)}
 .ansbox .ph{color:var(--ink-3);font-size:13px}
 /* 계수는 아래첨자보다 크고 앞에 온다 — 자리와 크기가 규칙을 가르친다 */
@@ -570,6 +575,17 @@ body.present .tok{font-size:34px}
 .keygrp.coefgrp .kl{color:var(--warn)}
 .key.coef{color:var(--warn);font-weight:800}
 .keygrp .kl span{font-weight:500;color:var(--ink-3);margin-left:5px}
+/* 쓰는 순서는 '규칙으로 따져 낼 것'이 아니라 '주어진 것'이다 (중학교 교육과정).
+   학생이 할 일은 분자 1개에 각 원자가 몇 개인지 세어 이 순서대로 적는 것 */
+.qorder{
+  position:absolute;left:var(--sp3);top:var(--sp3);z-index:3;
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--panel-3);border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:5px 12px;font-size:var(--fs-label);font-weight:500;color:var(--ink-2);
+}
+.qorder .k{color:var(--ink-3);font-weight:700}
+.qorder b{font-weight:800;font-size:15px;line-height:1}
+.qorder i{font-style:normal;color:var(--ink-3);font-size:12px;margin:0 -1px}
 .tok{font-size:26px;font-weight:800;letter-spacing:.01em;line-height:1.1}
 .tok sub{font-size:.55em}
 .tok.warn{color:var(--warn)}
@@ -598,7 +614,8 @@ body.present .tok{font-size:34px}
 .key.off.buzz{animation:keybuzz .3s ease}
 @keyframes keybuzz{0%,100%{transform:translateX(0)}20%{transform:translateX(-4px)}60%{transform:translateX(4px)}}
 @media (prefers-reduced-motion:reduce){.key.off.buzz{animation:none;border-color:var(--warn)}}
-/* 생략된 1 — '계수가 없다'가 아니라 '1이라서 쓰지 않는다'를 눈으로 남긴다 */
+/* 생략된 1 — '계수가 없다'가 아니라 '1이라서 쓰지 않는다'를 눈으로 남긴다.
+   inline-flex 상자의 밑선은 첫 줄의 밑선이므로 옆의 분자식과 저절로 맞는다 */
 .tok.implied{
   font-size:15px;font-weight:700;color:var(--ink-3);border:1px dashed var(--line);border-radius:var(--r1);
   padding:3px 7px;margin-right:7px;display:inline-flex;align-items:baseline;gap:5px;line-height:1.1;
@@ -1178,6 +1195,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         </div>
         <div class="qstage">
           <svg id="quizSvg" role="img" aria-label="분자 모형"></svg>
+          <span class="qorder" id="qOrder" hidden></span>
           <button class="btn sm ghost stage-chip" id="labelBtn" type="button" aria-pressed="false">모형에 기호 보이기</button>
         </div>
         <div class="ansbox" id="ansBox"><span class="ph">아래 버튼으로 화학식을 만들어 보세요</span></div>
@@ -1198,13 +1216,14 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
         </div>
       </div>
       <aside class="card pad qside scroll-y">
-        <h2 class="h-sec">화학식 쓰는 순서</h2>
+        <h2 class="h-sec">분자식 쓰는 방법</h2>
         <div class="rule"><div class="n">1</div><div><h4>원자의 종류를 원소 기호로</h4><p>모형의 색으로 원자의 종류를 구별해요.</p></div></div>
-        <div class="rule"><div class="n">2</div><div><h4>개수를 오른쪽 아래에 작게</h4><p>원자가 1개이면 숫자 1은 쓰지 않아요.</p></div></div>
-        <div class="rule"><div class="n">3</div><div><h4>정해진 순서대로</h4><p>탄소가 있으면 C부터, 없으면 원소 배열 순서를 따릅니다.</p></div></div>
+        <div class="rule"><div class="n">2</div><div><h4>분자 1개 속 원자 개수를 세어</h4><p>기호 오른쪽 아래에 작게 씁니다. 원자가 1개이면 숫자 1은 쓰지 않아요.</p></div></div>
+        <div class="rule"><div class="n">3</div><div><h4>순서는 주어진 대로</h4><p>어느 원소를 먼저 쓸지는 이미 <b>정해져 있어요.</b> 화면 왼쪽 위 <b>「쓰는 순서」</b>를 그대로 따르면 됩니다.</p></div></div>
         <div class="rule"><div class="n">4</div><div><h4>분자가 여러 개면 식 앞에 크게</h4><p>분자 1개일 때도 <b>1은 쓰지 않습니다.</b> H₂O 자체가 이미 ‘물 분자 1개’라는 뜻이에요.</p></div></div>
         <div style="height:12px"></div>
-        <button class="btn sm ghost" id="qGoBook" type="button">📘 「분자식 표기 순서」 열기</button>
+        <button class="btn sm ghost" id="qGoBook" type="button">📘 「분자식 표기 순서」 열기 · 심화</button>
+        <p style="margin:6px 0 0;font-size:12px;color:var(--ink-3);line-height:1.5">순서를 정하는 규칙은 중학교 교육과정에 나오지 않아요. 더 알고 싶은 학생을 위한 참고 자료입니다.</p>
         <div style="height:16px"></div>
         <h2 class="h-sec">원자 색 안내</h2>
         <div class="compo" id="legend"></div>
@@ -1270,11 +1289,14 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
 
           <div class="refhero">
             <div>
-              <div class="kick">📘 참고 매뉴얼 · 실험과 따로 보는 정리</div>
+              <div class="kick">📘 심화 참고 · 중학교 교육과정 밖 · 실험과 따로 보는 정리</div>
               <h2>화학식에서 원소를 쓰는 순서는 정해져 있다</h2>
               <p>물은 H<sub>2</sub>O라고 쓰고 OH<sub>2</sub>라고 쓰지 않습니다. 암모니아는 NH<sub>3</sub>이지 H<sub>3</sub>N이 아니고요.
               모형이 같아도 <b>쓰는 순서는 하나</b>입니다. 그 순서를 정하는 두 기준 — <b>Hill 표기법</b>과
               <b>IUPAC 원소 배열 순서</b> — 를 정리했습니다.</p>
+              <p style="font-size:var(--fs-meta);color:var(--ink-3)"><b>중학교에서는 이 순서를 외우거나 따져 낼 필요가 없습니다.</b>
+              실험 화면에서는 순서를 언제나 알려 주고, 여러분이 할 일은 <b>분자 1개에 각 원자가 몇 개인지 세어</b> 그 순서대로 쓰는 것이에요.
+              아래 내용은 더 알고 싶은 학생과 선생님을 위한 참고 자료입니다.</p>
             </div>
             <div class="fig" id="refHeroFig"></div>
           </div>
@@ -1863,7 +1885,7 @@ const MCQ = [
    q:"물의 화학식을 쓴 것 중 <b>옳은</b> 것은?",
    opts:["H<sub>2</sub>O<sub>1</sub>","OH<sub>2</sub>","H<sub>2</sub>O","HHO"],
    a:2,
-   why:"원자가 1개일 때 아래첨자 1은 생략하고, 같은 원소는 한 번만 쓴 뒤 개수를 아래첨자로 나타냅니다. 원소 배열 순서에서 수소가 산소보다 앞이므로 H₂O예요.",
+   why:"원자가 1개일 때 아래첨자 1은 생략하고(H₂O₁ ✕), 같은 원소는 한 번만 쓴 뒤 개수를 아래첨자로 나타냅니다(HHO ✕). 어느 원소를 먼저 쓸지는 이미 정해진 약속이라 물은 H₂O로 씁니다.",
    short:"아래첨자 1은 생략하고, 같은 원소는 한 번만 씁니다.",
    card:"화학식 쓰는 2단계"},
   {id:"m4", type:"choice",
@@ -1907,11 +1929,11 @@ const WQ = [
    hint:"조립대에서 산소와 오존을 차례로 만들어 도감에 나란히 놓아 보세요. 두 모형에서 구슬의 색과 개수 중 무엇이 같고 무엇이 다른지 세어 보면 됩니다.",
    model:"두 분자는 모두 산소 원자로만 이루어져 있지만 <mark>결합한 원자의 개수</mark>가 다릅니다. 산소는 산소 원자 2개(O₂), 오존은 3개(O₃)가 결합했습니다. 원자의 종류가 같아도 <mark>결합한 개수가 달라지면 서로 다른 분자</mark>가 되고 성질도 달라집니다. 그래서 오존은 산소와 달리 특유의 냄새가 나고, 지표 부근에 많아지면 호흡기에 해로운 영향을 줍니다.",
    keys:["개수","다른 물질","성질"]},
-  {id:"w3", code:"[9과11-01] 화학식 표기 규칙",
-   q:"이산화 탄소를 CO₂라고 쓰고 O₂C라고 쓰지 않는 까닭은 무엇인가요? 그리고 CO₂에서 아래첨자 2가 무엇을 뜻하는지도 함께 설명해 보세요.",
-   hint:"「분자식 표기 순서」 탭을 열어 ① Hill 표기법을 읽어 보세요. 탄소가 들어 있는 물질은 어느 원소부터 시작하는지 나와 있습니다.",
-   model:"화학식은 원소 기호를 <mark>정해진 순서</mark>로 씁니다. 탄소가 들어 있는 물질은 탄소(C)를 맨 앞에 쓰기 때문에 CO₂가 됩니다. 오른쪽 아래에 작게 쓴 <mark>2는 바로 앞 원소인 산소 원자가 2개</mark>라는 뜻입니다. 탄소는 1개이므로 숫자 1은 생략합니다.",
-   keys:["순서","아래첨자","개수"]},
+  {id:"w3", code:"[9과11-01] 분자식이 알려 주는 원자의 개수",
+   q:"이산화 탄소의 분자식은 CO₂입니다. 이 식에서 아래첨자 2는 무엇을 뜻하나요? 그리고 탄소 뒤에는 왜 숫자가 없는지도 함께 설명해 보세요.",
+   hint:"「분자식 쓰기」 탭에서 이산화 탄소 모형을 보고 <b>분자 1개 안의 구슬을 색깔별로</b> 세어 보세요. 검은 구슬(탄소)과 빨간 구슬(산소)이 각각 몇 개인지 세면 답이 보입니다.",
+   model:"아래첨자 <mark>2는 바로 앞 원소인 산소 원자가 분자 1개에 2개</mark> 들어 있다는 뜻입니다. 탄소는 분자 1개에 <mark>1개뿐이어서 숫자 1을 쓰지 않습니다.</mark> 분자식에서 아래첨자는 언제나 <mark>바로 앞의 원소 기호 하나</mark>에만 적용되므로, CO₂는 탄소 1개와 산소 2개가 결합한 분자 1개를 뜻합니다.",
+   keys:["산소","2개","1은"]},
   {id:"w4", code:"[9과11-04] 원자가 성질을 나타내는 물질",
    q:"헬륨(He)의 화학식에는 아래첨자가 없습니다. 헬륨은 어떤 입자가 물질의 성질을 나타내는지 산소(O₂)와 비교해 설명해 보세요.",
    hint:"분류 미션 탭에서 헬륨 카드와 산소 카드를 각각 만나면 모형에 구슬이 몇 개 그려지는지 세어 보세요. 두 모형의 구슬 개수 차이가 답의 실마리입니다.",
@@ -2882,10 +2904,15 @@ function loadQ(){
   $("#qScore").textContent = qScore+" / "+QUIZ.length;
   qFb.className="fb"; qFb.innerHTML="";
   $("#nextBtn").hidden = true; $("#checkBtn").disabled = false;
-  /* 개수는 글씨로 알려 주지 않는다 — 화면에 놓인 모형을 세어 학생이 판단한다 */
+  /* 개수는 글씨로 알려 주지 않는다 — 화면에 놓인 모형을 세어 학생이 판단한다.
+     반면 '쓰는 순서'는 규칙으로 따지게 하지 않고 그대로 알려 준다 */
+  const ord = $("#qOrder");
+  ord.hidden = false;
+  ord.innerHTML = '<span class="k">쓰는 순서</span>'
+    + byId[q.mol].parts.map(([e])=>'<b style="color:'+(atomInk(e)||"var(--ink)")+'">'+e+'</b>').join('<i>→</i>');
   $("#g2").innerHTML = (q.count||1) > 1
-    ? "화면에 놓인 <b>분자가 몇 개</b>인지 세어 보세요. <b>분자 1개의 구성은 그대로</b> 두고, 센 개수는 식 앞 계수에 씁니다."
-    : "모형을 보고 원자의 종류와 개수를 세어 분자식을 만들어 보세요. <b>분자가 1개이면 식 앞에는 아무것도 쓰지 않아요.</b>";
+    ? "<b>분자 1개</b>에 각 원자가 몇 개인지 세어 위의 순서대로 쓰고, 화면에 놓인 <b>분자가 몇 개</b>인지 세어 식 앞에 쓰세요."
+    : "<b>분자 1개</b>에 각 원자가 몇 개인지 세어, 위의 <b>쓰는 순서</b>대로 기호와 숫자를 쓰세요. <b>1은 쓰지 않아요.</b>";
   redrawQuiz(); renderAnswer();
 }
 function redrawQuiz(){
@@ -2913,9 +2940,9 @@ function renderAnswer(){
   }
   ansBox.className="ansbox filled";
   const head = coefTok ? '<span class="tok coef">'+coefTok+'</span>' : IMPLIED_ONE;
-  ansBox.innerHTML = head + tokens.map(t=>
+  ansBox.innerHTML = '<span class="ansrow">' + head + tokens.map(t=>
     '<span class="tok formula">'+t.e+((t.explicit||t.n>1)?"<sub>"+t.n+"</sub>":"")+'</span>'
-  ).join("");
+  ).join("") + '</span>';
   sayBench();
 }
 function sayBench(){
@@ -3047,12 +3074,14 @@ function grade(){
     /* 계수 1·아래첨자 1은 키패드에서 아예 입력되지 않으므로 여기서 걸러질 일이 없다 */
     right = sameOrder && gotN===wantN;
 
+    const per = want.map(([e,n])=>ATOMS[e].ko+"("+e+") "+n+"개").join(", ");
     if(right){
       msg = "정확해요. "+m.ko+" 분자 "+wantN+"개 — "+full;
-      why = wantN>1
-        ? "분자식 "+fText(want)+"는 그대로이고, 앞의 "+wantN+"은 분자 수예요. 전체 원자 수는 "
-          + want.map(([e,n])=>ATOMS[e].ko+" "+(n*wantN)+"개").join(", ")+"입니다."
-        : (ORDER_WHY[m.id]||"") + " 분자가 1개이므로 식 앞에는 아무것도 쓰지 않습니다.";
+      why = "분자 1개에 "+per+"가 들어 있어요. 1개인 원자는 아래첨자를 쓰지 않습니다. "
+        + (wantN>1
+            ? "분자식 "+fText(want)+"는 그대로이고, 앞의 "+wantN+"은 분자 수예요. 전체 원자 수는 "
+              + want.map(([e,n])=>ATOMS[e].ko+" "+(n*wantN)+"개").join(", ")+"입니다."
+            : "분자가 1개이므로 식 앞에도 아무것도 쓰지 않습니다.");
     } else if(multiplied){
       msg="분자 수와 원자 수를 구분해 보세요.";
       why="전체 원자 수를 아래첨자에 합쳐 쓰면 다른 뜻이 됩니다. 분자 1개의 구성 "+fText(want)
@@ -3068,11 +3097,14 @@ function grade(){
     } else if(rep){
       msg="같은 원소는 한 번만 쓰고 개수를 아래첨자로 나타내요."; why="수소 원자 2개는 HH가 아니라 H₂로 씁니다. 정답은 "+full+"예요.";
     } else if(!sameNum){
-      msg="분자 1개 속 원자 수를 확인해 보세요.";
-      why=want.filter(([e,n])=>gm[e]!==n).map(([e,n])=>ATOMS[e].ko+": 현재 "+(gm[e]||0)+"개, 필요한 수 "+n+"개").join(" · ")
+      msg="분자 1개 속 원자 수를 다시 세어 보세요.";
+      why="모형 한 덩어리 안의 구슬을 색깔별로 세어 보세요. "
+          +want.filter(([e,n])=>gm[e]!==n).map(([e,n])=>ATOMS[e].ko+": 내가 쓴 수 "+(gm[e]||0)+"개, 모형 속 "+n+"개").join(" · ")
           +". 정답은 "+full+"예요.";
     } else {
-      msg="원소를 쓰는 순서가 달라요."; why=(ORDER_WHY[m.id]||"")+" 정답은 "+full+"예요.";
+      msg="쓰는 순서를 확인해 보세요.";
+      why="원소를 쓰는 순서는 이미 정해져 있어요. 화면 왼쪽 위 「쓰는 순서」대로 "
+          +want.map(([e])=>e).join(" → ")+" 차례로 씁니다. 정답은 "+full+"예요.";
     }
     if(!right) logWrong(q,
       (coefTok?coefTok:"")+tokens.map(t=>t.e+(t.explicit||t.n>1?t.n:"")).join(""), full, why);
@@ -3083,18 +3115,21 @@ function grade(){
   $("#qScore").textContent = qScore+" / "+QUIZ.length;
   $("#qBar").style.width = ((qIdx+1)/QUIZ.length*100)+"%";
 }
+/* 화학식 문항은 모두 '분자 1개 속 원자 수 세기'가 학습 목표다.
+   순서 규칙(탭5)은 중학교 교육과정 밖이므로 복습 카드로 안내하지 않는다 */
 const CARD_FOR = {
-  q1:"화학식 쓰는 2단계", q3:"분자식 표기 순서 ① Hill 표기법",
-  q5:"분자식 표기 순서 ② 원소 배열 순서", q7:"분자식 표기 순서 ① Hill 표기법",
-  q9:"화학식 쓰는 2단계", q11:"화학식 쓰는 2단계"
+  q1:"화학식 쓰는 2단계", q3:"화학식 쓰는 2단계", q5:"화학식 쓰는 2단계",
+  q7:"화학식 쓰는 2단계", q9:"화학식 쓰는 2단계", q11:"화학식 쓰는 2단계"
 };
 function logWrong(q, mine, right, why){
   quizLog.wrong = quizLog.wrong.filter(w=>w.id!==q.id);
   quizLog.wrong.push({
     id:q.id,
-    q: byId[q.mol].ko+" 분자 "+(q.count||1)+"개를 분자식으로 쓰시오.",
+    q: byId[q.mol].ko+" 분자 "+(q.count||1)+"개를 분자식으로 쓰시오. (분자 1개에 "
+       + byId[q.mol].parts.map(([e,c])=>ATOMS[e].ko+" "+c+"개").join(", ")
+       + " · 쓰는 순서 "+byId[q.mol].parts.map(([e])=>e).join(" → ")+")",
     mine: mine||"(쓰지 않음)", right: right, why: why,
-    concept: "화학식 쓰는 순서",
+    concept: "분자 1개 속 원자 수 세기",
     card: CARD_FOR[q.id] || "화학식 쓰는 2단계"
   });
   store.set("quiz", quizLog);
@@ -3785,7 +3820,7 @@ const CARDS = [
      '<path d="M226 112 L206 112" stroke="{WARN}" stroke-width="1.4" marker-end="none"/></svg>',
    def:"화학식은 <b>물질을 원소 기호와 숫자로 나타낸 것</b>입니다.",
    body:"① 분자를 이루는 원자의 종류를 원소 기호로 씁니다. ② 원자의 개수를 원소 기호의 오른쪽 아래에 작은 숫자로 씁니다. 개수가 1개일 때는 1을 생략해요.",
-   link:"‘화학식 쓰기’ 탭의 아래첨자 버튼이 바로 2단계예요. 1을 눌러 보면 노란색으로 경고가 뜹니다. 원소를 쓰는 <b>순서</b>는 「분자식 표기 순서」 탭에 따로 정리해 두었습니다.",
+   link:"「분자식 쓰기」 탭의 아래첨자 버튼이 바로 2단계예요. 1은 쓰지 않는 수라서 눌러도 입력되지 않습니다. 원소를 쓰는 <b>순서</b>는 화면 왼쪽 위 「쓰는 순서」에 그대로 주어지니 따져 낼 필요가 없어요.",
    more:"아래첨자는 <b>바로 앞의 원소 기호 하나</b>에만 적용됩니다. CO₂에서 2는 산소에만 붙는 숫자예요. 원소 기호와 화학식을 쓰면 다른 언어를 쓰는 사람과도 물질 정보를 주고받을 수 있습니다."},
 
   {t:"이온 — 전하를 띤 입자", code:"[9과11-04]",
@@ -4124,9 +4159,10 @@ function buildBlank(withAnswer){
   h += '</div><div class="pr-sec"><h2>분자식 쓰기 — 화학식 적기</h2>';
   QUIZ.forEach((q,i)=>{
     const m = byId[q.mol], n = q.count||1;
-    h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+m.ko+' 분자 '+n+'개가 있습니다. 분자 1개는 '+
-      m.parts.map(([e,c])=>ATOMS[e].ko+"("+e+") 원자 "+c+"개").join(", ")+
-      '(으)로 이루어져 있습니다. 화학식을 쓰시오.</p><div class="pr-lines"><i></i></div></div>';
+    h += '<div class="pr-q"><p class="qt">'+(i+1)+'. '+m.ko+' 분자 '+n+'개가 있습니다. 분자 1개에 든 원자의 개수를 세어 '+
+      '<b>'+m.parts.map(([e])=>e).join(" → ")+'</b> 순서로 분자식을 쓰시오.</p>'+
+      '<p class="tags">분자 1개의 모형: '+m.parts.map(([e,c])=>ATOMS[e].ko+"("+e+") 원자 "+c+"개").join(", ")+'</p>'+
+      '<div class="pr-lines"><i></i></div></div>';
   });
   h += '</div><div class="pr-sec"><h2>탐구 질문 — 객관식 문항</h2>';
   MCQ.forEach((q,i)=>{
@@ -4147,9 +4183,10 @@ function buildBlank(withAnswer){
       h += '<tr><td>서술 '+(i+1)+'</td><td>'+stripTag(q.model)+'</td><td>'+q.keys.map(k=>"‘"+k+"’").join(", ")+' 가 답안에 들어갔는지 확인</td></tr>';
     });
     QUIZ.forEach((q,i)=>{
-      const n = q.count||1;
-      const a = (n>1 ? n : "") + fText(byId[q.mol].parts);
-      const why = (ORDER_WHY[q.mol]||"")
+      const m = byId[q.mol], n = q.count||1;
+      const a = (n>1 ? n : "") + fText(m.parts);
+      const why = "분자 1개에 "+m.parts.map(([e,c])=>ATOMS[e].ko+"("+e+") "+c+"개").join(", ")
+        + ". 1개인 원자는 아래첨자를 생략한다. 쓰는 순서("+m.parts.map(([e])=>e).join(" → ")+")는 주어진 대로 따른다."
         + (n>1 ? " 분자 "+n+"개이므로 식 앞에 계수 "+n+"을 쓴다."
                : " 분자가 1개이므로 계수 1은 쓰지 않는다.");
       h += '<tr><td>화학식 '+(i+1)+'</td><td><b>'+esc(a)+'</b></td><td>'+esc(why)+'</td></tr>';
