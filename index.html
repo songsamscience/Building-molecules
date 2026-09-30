@@ -225,7 +225,7 @@ body.fs #app{height:100vh}
 .chan .badge svg{width:13px;height:13px;fill:#fff;display:block}
 .chan .yt .badge{background:#FF0000}
 .chan .ig .badge{background:linear-gradient(135deg,#F9CE34,#EE2A7B 52%,#6228D7)}
-.chan .ext{color:var(--ink-3)}
+
 
 /* ---- 탭 ---- */
 .tabs{display:flex;align-items:center;gap:var(--sp2);padding:0 var(--sp4);border-bottom:1px solid var(--line-soft);overflow-x:auto;scrollbar-width:none}
@@ -332,6 +332,9 @@ html[data-theme="light"] .benchtop{background:linear-gradient(180deg,rgba(255,25
 .chip[aria-pressed="true"]{border-color:var(--brand-blue-lit);background:rgba(84,168,255,.12);color:var(--ink)}
 .chip.got::after{content:"✓";color:var(--ok);font-weight:900;font-size:12px}
 .bench{
+  --ghost-w:clamp(176px,31%,320px);   /* 오른쪽 화학식 칸 너비 */
+  --ghost-h:0px;                      /* 좁은 화면에서만 아래 띠로 바뀐다 */
+  --dock-h:96px;                      /* 조작 독의 실제 높이 · JS가 갱신한다 */
   position:relative;border:1px solid var(--line);border-radius:var(--r3);overflow:hidden;min-height:0;
   background:radial-gradient(120% 100% at 22% 8%,var(--panel-2),var(--panel) 62%,var(--bg-2) 100%);
   box-shadow:var(--sh2);
@@ -339,25 +342,33 @@ html[data-theme="light"] .benchtop{background:linear-gradient(180deg,rgba(255,25
 .bench svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 .bench.shake{animation:shake .34s}
 @keyframes shake{0%,100%{transform:translateX(0)}22%{transform:translateX(-7px)}55%{transform:translateX(6px)}80%{transform:translateX(-3px)}}
-/* 지금 만드는 분자 — 조립대 배경에 크게 깔리는 화학식 */
+/* 지금 만드는 분자 — 조립대 오른쪽에 세로로 세운 화학식 칸.
+   분자가 놓이는 자리(왼쪽)와 구역을 나누어 두어 모형이 글자를 덮지 않는다.
+   benchArea()가 이 칸의 실제 크기를 재서 원자 놓을 자리를 그만큼 줄인다 */
 .bghost{
-  position:absolute;left:0;right:0;top:var(--h-benchtop);bottom:128px;z-index:0;
-  display:grid;place-content:center;justify-items:center;gap:3px;
-  text-align:center;pointer-events:none;user-select:none;padding:0 var(--sp4);
+  position:absolute;right:0;top:var(--h-benchtop);bottom:calc(var(--dock-h) + 16px);left:auto;z-index:0;
+  width:var(--ghost-w);
+  display:grid;place-content:center;justify-items:center;gap:4px;
+  text-align:center;pointer-events:none;user-select:none;padding:0 var(--sp3);
 }
-.bghost .k{font-size:12px;font-weight:800;letter-spacing:.26em;color:var(--ink-2);opacity:.42}
+.bghost.tiny{display:none}   /* 띠를 세울 자리조차 없을 때 — HUD가 같은 정보를 이미 보여 준다 */
+.bghost::before{  /* 두 구역의 경계 — 겹치지 않는 배치임을 눈으로 알린다 */
+  content:"";position:absolute;left:0;top:14%;bottom:14%;width:1px;background:var(--line-soft);
+}
+.bghost .k{font-size:12px;font-weight:800;letter-spacing:.26em;color:var(--ink-2);opacity:.52}
 .bghost .f{
-  font-size:clamp(58px,12vw,140px);font-weight:800;line-height:.98;letter-spacing:.005em;
-  color:var(--ink);opacity:.105;white-space:nowrap;
+  font-size:clamp(34px,5.4vw,80px);font-weight:800;line-height:.98;letter-spacing:.005em;
+  color:var(--ink);opacity:.17;white-space:nowrap;max-width:100%;
 }
 .bghost .f sub{font-size:.54em}
-.bghost .n{font-size:13px;font-weight:700;color:var(--ink-2);opacity:.46}
-html[data-theme="light"] .bghost .f{opacity:.085}
-.bghost.done .f{color:var(--ok);opacity:.20}
-html[data-theme="light"] .bghost.done .f{opacity:.17}
-.bghost.done .k,.bghost.done .n{color:var(--ok);opacity:.86}
+.bghost .n{font-size:13px;font-weight:700;color:var(--ink-2);opacity:.52;line-height:1.45}
+html[data-theme="light"] .bghost .f{opacity:.14}
+.bghost.done .f{color:var(--ok);opacity:.32}
+html[data-theme="light"] .bghost.done .f{opacity:.28}
+.bghost.done .k,.bghost.done .n{color:var(--ok);opacity:.9}
 .bench-empty{
-  position:absolute;left:0;right:0;bottom:124px;text-align:center;color:var(--ink-3);
+  position:absolute;left:0;right:var(--ghost-w);bottom:calc(var(--dock-h) + 22px + var(--ghost-h));
+  text-align:center;color:var(--ink-3);
   font-size:13px;line-height:1.65;pointer-events:none;padding:0 var(--sp4);
 }
 .hud{
@@ -967,9 +978,24 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
   .dock{padding:6px;gap:0}
   .atom-btn{min-height:44px;padding:5px 8px}
   .btn{min-height:44px;padding:8px 13px}
-  .bench-empty{bottom:78px}
-  .bghost{bottom:82px}
-  .bghost .f{font-size:clamp(44px,9vw,86px)}
+  .bghost .f{font-size:clamp(32px,5.4vw,62px)}
+}
+/* 좁은 화면에서는 오른쪽 칸을 세울 자리가 없다 — 아래 가로 띠로 눕힌다.
+   이때도 분자 구역과 겹치지 않도록 benchArea()가 아래쪽을 줄인다 */
+@media (max-width:760px){
+  .bench{--ghost-w:0px;--ghost-h:46px}
+  .bghost{
+    left:0;right:0;width:auto;top:auto;height:var(--ghost-h);bottom:calc(var(--dock-h) + 12px);
+    padding:0 var(--sp3);gap:0;
+    grid-auto-flow:column;place-content:center;align-items:baseline;column-gap:9px;
+  }
+  .bghost::before{display:none}
+  .bghost .k{font-size:11px;letter-spacing:.14em}
+  .bghost .f{font-size:26px;opacity:.42}
+  html[data-theme="light"] .bghost .f{opacity:.38}
+  .bghost.done .f{opacity:.72}
+  .bghost .n{font-size:11px}
+  .bench-empty{bottom:calc(var(--dock-h) + 20px + var(--ghost-h))}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
 
@@ -1520,11 +1546,11 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:2px 7px;border
     <div class="chan">
       <a class="yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)">
         <span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.6 7.2s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16 4.1 12 4.1 12 4.1s-4 0-6.8.2c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2.2 8.8 2.2 10.5v1.6c0 1.6.2 3.3.2 3.3s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.2 6.6.2 6.6.2s4 0 6.8-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3v-1.6c0-1.7-.2-3.3-.2-3.3zM9.9 14.3V8.7l5.2 2.8z"/></svg></span>
-        @songsamscience<span class="ext" aria-hidden="true">↗</span>
+        @songsamscience
       </a>
       <a class="ig" href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)">
         <span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.2a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z"/></svg></span>
-        @songsamscience<span class="ext" aria-hidden="true">↗</span>
+        @songsamscience
       </a>
     </div>
   </div>
@@ -2272,6 +2298,16 @@ window.addEventListener("resize", ()=>setTimeout(fitAll,60));
    ============================================================ */
 const benchSvg = $("#benchSvg"), bench = $("#bench");
 const WSCALE = 2.0;
+/* 결합한 분자를 그릴 배율. 조립대가 좁으면 WSCALE보다 줄여 구역 밖으로
+   삐져나가지 않게 한다 — 화학식 칸을 침범하지 않기 위한 마지막 안전장치 */
+let poseScale = WSCALE;
+function fitScale(mol){
+  const a = benchArea(), e = molExtent(mol), pad = 8;
+  /* 자리가 아주 좁으면 분자를 크게 줄여서라도 구역 안에 넣는다 —
+     조작 독이나 화학식 칸 위로 올라타는 것보다 작게 그리는 편이 낫다 */
+  return Math.max(0.42, Math.min(WSCALE,
+    (a.x1-a.x0-pad*2)/Math.max(1,e.w), (a.y1-a.y0-pad*2)/Math.max(1,e.h)));
+}
 let target = null, placed = [], bonded = false, animating = false;
 let collected = new Set(store.get("dex", []));
 let poePick = null, poeDone = false;
@@ -2282,14 +2318,50 @@ function benchSize(){
   const b = benchSvg.viewBox.baseVal;
   return {w: b.width || bench.clientWidth || 560, h: b.height || bench.clientHeight || 360};
 }
-/* 조작 독과 HUD를 피해 원자를 놓을 수 있는 영역 (§3 — 조작 버튼은 화면 안에 있다) */
+/* 조작 독·HUD·화학식 칸을 피해 원자를 놓을 수 있는 영역
+   (§3 — 조작 버튼은 화면 안에 있다 / 모형과 글자는 같은 자리를 쓰지 않는다) */
 function benchArea(){
   const {w,h} = benchSize();
   const dk = $("#dock1"), hud = bench.querySelector(".hud");
   const top    = hud ? (hud.offsetTop + hud.offsetHeight + 12) : 98;
   const bottom = ((dk  && dk.offsetHeight)  || 80) + 22;
   const side   = 14;
-  return {x0:side, x1:Math.max(side+60, w-side), y0:top, y1:Math.max(top+60, h-bottom), w, h};
+  let x1 = w - side, y1 = h - bottom;
+  const g = $("#benchGhost");
+  if(g && !g.hidden && g.offsetWidth){
+    /* 화학식 칸이 세로면 오른쪽을, 가로 띠면 아래쪽을 양보한다 */
+    if(g.offsetWidth < w - 24) x1 = Math.min(x1, g.offsetLeft - 10);
+    else                       y1 = Math.min(y1, g.offsetTop  - 10);
+  }
+  return {x0:side, x1:Math.max(side+60, x1), y0:top, y1:Math.max(top+60, y1), w, h};
+}
+/* 조작 독은 화면 폭에 따라 한 줄이 되기도 두 줄이 되기도 한다.
+   그 높이를 CSS 변수로 넘겨 화학식 칸이 독 뒤로 숨지 않게 한다 */
+function syncDockVar(){
+  const dk = $("#dock1");
+  if(dk && dk.offsetHeight) bench.style.setProperty("--dock-h", dk.offsetHeight+"px");
+  const g = $("#benchGhost"); if(!g) return;
+  /* 아래 띠 모드에서는 띠가 분자 자리를 너무 많이 가져가지 않게 높이를 조절하고,
+     그래도 자리가 안 나오면 띠를 접는다 — 같은 정보는 HUD의 '완성한 분자'에 남는다 */
+  const band = getComputedStyle(bench).getPropertyValue("--ghost-w").trim() === "0px";
+  if(!band){ bench.style.removeProperty("--ghost-h"); g.classList.remove("tiny"); return; }
+  const {h} = benchSize();
+  const hud = bench.querySelector(".hud");
+  const top = hud ? (hud.offsetTop + hud.offsetHeight + 12) : 98;
+  const room = h - ((dk && dk.offsetHeight) || 80) - 22 - top;   /* 띠와 분자가 나눠 쓸 높이 */
+  const bh = Math.min(46, room - 150);                            /* 분자 자리 150px는 지킨다 */
+  g.classList.toggle("tiny", bh < 34);
+  bench.style.setProperty("--ghost-h", Math.max(0, bh)+"px");
+}
+/* 화학식 칸이 새로 생기거나 화면 크기가 바뀌면 이미 올린 원자를 자리 안으로 데려온다 */
+function clampPlaced(){
+  if(bonded || animating || !placed.length) return;
+  const a = benchArea();
+  placed.forEach(p=>{
+    const r = ATOMS[p.e].r*WSCALE;
+    p.x = Math.min(a.x1-r, Math.max(a.x0+r, p.x));
+    p.y = Math.min(a.y1-r, Math.max(a.y0+r, p.y));
+  });
 }
 function centroidOf(a){
   let x=0, y=0; a.forEach(p=>{x+=p.x; y+=p.y;});
@@ -2387,12 +2459,13 @@ function solvePose(mol, list){
   return best;
 }
 /* 완성된 분자가 조립대 밖으로 나가지 않도록 통째로 밀어 넣는다 */
-function fitPose(mol, pose){
+function fitPose(mol, pose, sc){
   const a = benchArea();
-  const pts = molPoints(mol, pose.ox, pose.oy, WSCALE, pose);
+  sc = sc || WSCALE;
+  const pts = molPoints(mol, pose.ox, pose.oy, sc, pose);
   let x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
   pts.forEach(p=>{
-    const r = ATOMS[p.e].r*WSCALE*(p.back?0.8:1) + 5;
+    const r = ATOMS[p.e].r*sc*(p.back?0.8:1) + 5;
     x0=Math.min(x0,p.x-r); x1=Math.max(x1,p.x+r);
     y0=Math.min(y0,p.y-r); y1=Math.max(y1,p.y+r);
   });
@@ -2593,17 +2666,20 @@ function hideResult(){ const r=$("#benchResult"); r.hidden=true; r.className="re
 
 function renderBench(){
   fitSvg(benchSvg);
+  syncDockVar();
   const {w,h} = benchSize();
   benchSvg.textContent = "";
   setGhost();
+  clampPlaced();
   $("#benchEmpty").style.display = placed.length ? "none" : "grid";
 
   if(bonded && placed.mol && placed.pose){
     const p = placed.pose;
     if(p.fx!=null){ p.ox = p.fx*w; p.oy = p.fy*h; }   /* 화면 크기가 바뀌어도 자리를 지킨다 */
-    fitPose(placed.mol, p);
+    poseScale = fitScale(placed.mol);
+    fitPose(placed.mol, p, poseScale);
     p.fx = p.ox/w; p.fy = p.oy/h;
-    drawMoleculeAt(benchSvg, placed.mol, molPoints(placed.mol, p.ox, p.oy, WSCALE, p), {scale:WSCALE});
+    drawMoleculeAt(benchSvg, placed.mol, molPoints(placed.mol, p.ox, p.oy, poseScale, p), {scale:poseScale});
     updateCounts(); setBondUI();
     return;
   }
@@ -2677,6 +2753,19 @@ function endDrag(){
 }
 ["pointerup","pointercancel","pointerleave"].forEach(t=>benchSvg.addEventListener(t,endDrag));
 
+/* 조작 독은 안내 문구가 바뀌면 높이도 바뀐다(한 줄 ↔ 두 줄).
+   그때마다 분자 자리를 다시 재서 모형이 독이나 화학식 칸 위로 올라타지 않게 한다 */
+if(window.ResizeObserver){
+  let lastDockH = 0;
+  new ResizeObserver(()=>{
+    const dk = $("#dock1"); if(!dk) return;
+    const hgt = dk.offsetHeight;
+    if(Math.abs(hgt - lastDockH) < 2) return;
+    lastDockH = hgt;
+    if(curTab === "t1" && !animating) renderBench();
+  }).observe($("#dock1"));
+}
+
 /* 결합 · 분해 — 버튼은 모두 조립대 안 조작 독에 있다 */
 $("#bondBtn").addEventListener("click", doBond);
 $("#breakBtn").addEventListener("click", breakApart);
@@ -2717,8 +2806,9 @@ function moveAtoms(targets, dur, ease, done){
 /* 시그니처 모션 — 대강 놓인 원자가 실제 분자 배열로 미끄러져 붙는다 */
 function animateInto(mol, pose){
   animating = true;
-  pose = fitPose(mol, pose || solvePose(mol, placed));
-  const pts = molPoints(mol, pose.ox, pose.oy, WSCALE, pose);
+  poseScale = fitScale(mol);
+  pose = fitPose(mol, pose || solvePose(mol, placed), poseScale);
+  const pts = molPoints(mol, pose.ox, pose.oy, poseScale, pose);
   const targets = placed.map((p,i)=>{
     const ti = pose.map[i];
     return (ti!=null && pts[ti]) ? pts[ti] : {x:p.x, y:p.y};
@@ -2730,11 +2820,11 @@ function animateInto(mol, pose){
   moveAtoms(targets, 560, spring, ()=>growBonds(mol, pose));
 }
 function growBonds(mol, pose){
-  const pts = molPoints(mol, pose.ox, pose.oy, WSCALE, pose);
+  const pts = molPoints(mol, pose.ox, pose.oy, poseScale, pose);
   const t0 = performance.now(), DUR = 260;
   function step(now){
     const k = REDUCE ? 1 : Math.min(1,(now-t0)/DUR);
-    drawMoleculeAt(benchSvg, mol, pts, {scale:WSCALE, grow:k});
+    drawMoleculeAt(benchSvg, mol, pts, {scale:poseScale, grow:k});
     if(k<1) requestAnimationFrame(step); else finishBond(mol, pose);
   }
   requestAnimationFrame(step);
@@ -2743,8 +2833,8 @@ function finishBond(mol, pose){
   const {w,h} = benchSize();
   pose.fx = pose.ox/w; pose.fy = pose.oy/h;
   animating = false; bonded = true; placed.mol = mol; placed.pose = pose;
-  drawMoleculeAt(benchSvg, mol, molPoints(mol, pose.ox, pose.oy, WSCALE, pose), {scale:WSCALE});
-  setGhost();                     /* 배경 화학식을 "완성"으로 바꾼다 */
+  drawMoleculeAt(benchSvg, mol, molPoints(mol, pose.ox, pose.oy, poseScale, pose), {scale:poseScale});
+  setGhost();                     /* 화학식 칸을 "완성"으로 바꾼다 */
   updateCounts();                 /* HUD를 "완성한 분자"로 바꾼다 */
   collected.add(mol.id); store.set("dex",[...collected]);
   SFX.ok();
@@ -2759,7 +2849,7 @@ function finishBond(mol, pose){
 function breakApart(){
   if(!bonded || animating || !placed.mol) return;
   const mol = placed.mol, pose = placed.pose;
-  const pts = molPoints(mol, pose.ox, pose.oy, WSCALE, pose);
+  const pts = molPoints(mol, pose.ox, pose.oy, poseScale, pose);
   const c = centroidOf(pts), a = benchArea();
   placed = pts.map(p=>({e:p.e, x:p.x, y:p.y}));
   bonded = false; placed.mol = null; placed.pose = null;
@@ -4346,10 +4436,10 @@ function channelLinksHTML(){
   return '<div class="chan">'
    + '<a class="yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)">'
    + '<span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.6 7.2s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16 4.1 12 4.1 12 4.1s-4 0-6.8.2c-.4.1-1.2.1-2 .9-.6.6-.8 2-.8 2S2.2 8.8 2.2 10.5v1.6c0 1.6.2 3.3.2 3.3s.2 1.4.8 2c.8.8 1.8.8 2.2.9 1.6.2 6.6.2 6.6.2s4 0 6.8-.2c.4-.1 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3v-1.6c0-1.7-.2-3.3-.2-3.3zM9.9 14.3V8.7l5.2 2.8z"/></svg></span>'
-   + '유튜브에서 더 보기<span class="ext" aria-hidden="true">↗</span></a>'
+   + '유튜브에서 더 보기</a>'
    + '<a class="ig" href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)">'
    + '<span class="badge" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c0 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2 0-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c0-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1A6.7 6.7 0 1 0 18.7 12 6.7 6.7 0 0 0 12 5.3zm0 11A4.3 4.3 0 1 1 16.3 12 4.3 4.3 0 0 1 12 16.3zm6.9-11.2a1.6 1.6 0 1 1-1.6-1.6 1.6 1.6 0 0 1 1.6 1.6z"/></svg></span>'
-   + '인스타그램<span class="ext" aria-hidden="true">↗</span></a></div>';
+   + '인스타그램</a></div>';
 }
 
 /* ============================================================
